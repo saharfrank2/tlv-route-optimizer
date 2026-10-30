@@ -29,7 +29,7 @@
                         },
                         gold: {
                             DEFAULT: '#B39366',
-                            light: '#CDB694',
+                            light: '#D4BD9B',
                             dark: '#8C6F47',
                         },
                         charcoal: {
@@ -75,7 +75,6 @@
             z-index: 10;
         }
 
-        /* Luxury Minimal Marker */
         .luxury-marker-pin {
             width: 28px;
             height: 28px;
@@ -135,6 +134,7 @@
             <nav class="hidden md:flex items-center space-x-10 text-[11px] uppercase tracking-[0.25em] font-normal text-charcoal/80">
                 <a href="#hero" class="hover:text-gold transition-colors py-1">Experience</a>
                 <a href="#planner" class="hover:text-gold transition-colors py-1">Itinerary Planner</a>
+                <a href="#gallery" class="hover:text-gold transition-colors py-1">Highlights</a>
                 <a href="#about" class="hover:text-gold transition-colors py-1">Philosophy</a>
             </nav>
 
@@ -203,14 +203,13 @@
                         <!-- Loaded dynamically -->
                     </div>
 
-                    <button onclick="optimizeRoute()" class="w-full bg-charcoal hover:bg-gold text-white hover:text-charcoal py-3.5 rounded-xl font-medium transition-all shadow-sm text-xs uppercase tracking-[0.25em] mt-3">
-                        Generate Optimal Schedule
+                    <button id="optimizeBtn" onclick="optimizeRoute()" class="w-full bg-charcoal hover:bg-gold text-white hover:text-charcoal py-3.5 rounded-xl font-medium transition-all shadow-sm text-xs uppercase tracking-[0.25em] mt-3 flex items-center justify-center space-x-2">
+                        <span>Generate Optimal Schedule</span>
                     </button>
                 </div>
 
                 <!-- Right: Map & Generated Timeline -->
                 <div class="lg:col-span-7 space-y-6">
-                    <!-- Clean Map Frame -->
                     <div class="luxury-card p-3 rounded-2xl">
                         <div id="map"></div>
                     </div>
@@ -239,8 +238,47 @@
         </div>
     </section>
 
+    <!-- NEW SECTION: Destination Cards Gallery (Like Tailor Made) -->
+    <section id="gallery" class="py-24 px-6 md:px-12 lg:px-20 bg-sand-light border-t border-gold/20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+                <span class="text-[10px] uppercase tracking-[0.35em] text-gold font-medium">CURATED DESTINATIONS</span>
+                <h2 class="font-serif text-3xl sm:text-5xl text-charcoal font-normal">Explore Tel Aviv Highlights</h2>
+                <div class="w-12 h-[1px] bg-gold mx-auto"></div>
+                <p class="text-charcoal-muted text-sm md:text-base font-light">
+                    Discover iconic architectural landmarks, vibrant gastronomic quarters, and Mediterranean promenades. Click any place to explore details.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="cardsGrid">
+                <!-- Injected dynamically via JS with photos -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Details Modal Popup -->
+    <div id="placeModal" class="fixed inset-0 z-50 bg-charcoal/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-cream rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-gold/30 transform scale-95 transition-transform duration-300" id="modalBox">
+            <div class="relative h-64 overflow-hidden">
+                <img id="modalImg" src="" alt="" class="w-full h-full object-cover">
+                <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-cream/90 backdrop-blur-md text-charcoal hover:text-gold flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+                <span id="modalCategory" class="absolute bottom-4 left-4 bg-charcoal/80 text-gold-light text-[10px] uppercase tracking-widest px-3 py-1 rounded-full font-light backdrop-blur-sm"></span>
+            </div>
+            <div class="p-6 md:p-8 space-y-4">
+                <h3 id="modalTitle" class="font-serif text-2xl text-charcoal font-normal"></h3>
+                <p id="modalDesc" class="text-xs md:text-sm text-charcoal-muted leading-relaxed font-light"></p>
+                <div class="pt-4 border-t border-gold/20 flex items-center justify-between text-xs font-mono text-charcoal-muted">
+                    <span id="modalDuration"><i class="fa-regular fa-clock mr-1 text-gold"></i> Suggested: 60 mins</span>
+                    <button onclick="closeModal()" class="text-charcoal hover:text-gold uppercase tracking-wider text-[11px] font-medium transition-colors">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Philosophy & Narrative -->
-    <section id="about" class="py-20 px-6 md:px-12 lg:px-24 bg-sand-light border-t border-gold/20">
+    <section id="about" class="py-20 px-6 md:px-12 lg:px-24 bg-cream border-t border-gold/20">
         <div class="max-w-4xl mx-auto text-center space-y-6">
             <span class="text-[10px] uppercase tracking-[0.35em] text-gold font-medium">DESIGN PHILOSOPHY</span>
             <h2 class="font-serif text-3xl sm:text-4xl text-charcoal font-normal">Effortless Spatial Curation</h2>
@@ -266,7 +304,6 @@
 
     <!-- Logic Script -->
     <script>
-        // Extensive separated places dataset
         const places = [
             {
                 id: 1,
@@ -275,7 +312,8 @@
                 lat: 32.0776,
                 lng: 34.7870,
                 duration: 90,
-                desc: "Modern and contemporary masterworks within an architectural landmark."
+                desc: "Modern and contemporary masterworks within an architectural landmark, featuring prominent Israeli and international collections.",
+                image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 2,
@@ -284,7 +322,8 @@
                 lat: 32.0673,
                 lng: 34.7674,
                 duration: 60,
-                desc: "The quintessential open-air food market with artisan street stalls."
+                desc: "The quintessential open-air food market offering vibrant spices, seasonal produce, and boutique chef stalls.",
+                image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 3,
@@ -293,7 +332,8 @@
                 lat: 32.0660,
                 lng: 34.7660,
                 duration: 50,
-                desc: "Quiet historic alleyways known for traditional home bakeries and taverns."
+                desc: "Quiet historic alleyways known for traditional home bakeries, vine-covered patios, and intimate neighborhood bars.",
+                image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 4,
@@ -302,7 +342,8 @@
                 lat: 32.0636,
                 lng: 34.7735,
                 duration: 60,
-                desc: "Iconic ficus-canopied avenue flanked by restored Bauhaus architecture."
+                desc: "Iconic ficus-canopied avenue flanked by restored Bauhaus architecture, kiosks, and outdoor cultural life.",
+                image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 5,
@@ -311,7 +352,8 @@
                 lat: 32.0597,
                 lng: 34.7632,
                 duration: 45,
-                desc: "Serene citrus courtyards and the cultural epicenter of Israeli dance."
+                desc: "Serene citrus courtyards and contemporary performance halls serving as the cultural epicenter of Israeli dance.",
+                image: "https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 6,
@@ -320,16 +362,18 @@
                 lat: 32.0612,
                 lng: 34.7650,
                 duration: 60,
-                desc: "Pastel cottages, designer boutiques, and peaceful cobblestone passages."
+                desc: "Pastel cottages, designer boutiques, and peaceful cobblestone passages in Tel Aviv's first Jewish suburb.",
+                image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 7,
-                name: "Old Jaffa Alleys & Zodiac Streets",
+                name: "Old Jaffa Alleys",
                 category: "neighborhoods",
                 lat: 32.0538,
                 lng: 34.7508,
                 duration: 75,
-                desc: "Limestone paths, artisan galleries, and ancient Mediterranean outlooks."
+                desc: "Limestone pedestrian paths named after Zodiac signs, artisan studios, and panoramic Mediterranean outlooks.",
+                image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 8,
@@ -338,7 +382,8 @@
                 lat: 32.0519,
                 lng: 34.7482,
                 duration: 45,
-                desc: "One of the oldest ports in the world with maritime history and seaside cafes."
+                desc: "One of the oldest continuously operating harbors in the world, filled with fishing schooners and waterfront seafood bistros.",
+                image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 9,
@@ -347,56 +392,42 @@
                 lat: 32.0588,
                 lng: 34.7725,
                 duration: 50,
-                desc: "Boutique delis, roasted coffee, cured olives, and Persian spice sacks."
+                desc: "Boutique delis, cold-pressed oils, roasted coffees, and Persian spice bins in south Tel Aviv.",
+                image: "https://images.unsplash.com/photo-1506484381205-f7945653044d?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 id: 10,
-                name: "Florentin Street Art Strip",
-                category: "neighborhoods",
-                lat: 32.0570,
-                lng: 34.7700,
-                duration: 45,
-                desc: "Bohemian quarter renowned for contemporary urban murals and craft studios."
-            },
-            {
-                id: 11,
-                name: "Bialik Street & Town Hall",
-                category: "culture",
-                lat: 32.0722,
-                lng: 34.7712,
-                duration: 40,
-                desc: "A picturesque square housing historic residences and early city archives."
-            },
-            {
-                id: 12,
                 name: "Charles Clore Beachfront",
                 category: "coastal",
                 lat: 32.0628,
                 lng: 34.7588,
                 duration: 45,
-                desc: "Sprawling grass lawns meeting coastal waves with views of historic Jaffa."
+                desc: "Sprawling grass lawns meeting coastal waves with postcard views of the Jaffa minaret and sea horizon.",
+                image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000&auto=format&fit=crop"
             },
             {
-                id: 13,
+                id: 11,
                 name: "Tel Aviv Port Boardwalk (Namal)",
                 category: "coastal",
                 lat: 32.0975,
                 lng: 34.7739,
                 duration: 60,
-                desc: "Undulating wooden decks, open horizons, and coastal sea spray."
+                desc: "Undulating wooden boardwalks, vibrant cafe terraces, and seaside breezes at the northern mouth of the Yarkon.",
+                image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1000&auto=format&fit=crop"
             },
             {
-                id: 14,
+                id: 12,
                 name: "Eretz Israel Museum (MUZA)",
                 category: "culture",
                 lat: 32.1028,
                 lng: 34.7950,
                 duration: 75,
-                desc: "Expansive museum pavilion showcasing regional archaeology and material culture."
+                desc: "Expansive museum campus showcasing regional archaeology, glasswork, ethnography, and rotating exhibitions.",
+                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop"
             }
         ];
 
-        let selectedPlaceIds = [4, 6, 7]; // Curated default
+        let selectedPlaceIds = [4, 6, 7];
         let map;
         let markersLayer;
         let routeLayer;
@@ -404,16 +435,18 @@
         function initMap() {
             map = L.map('map', { zoomControl: true }).setView([32.0710, 34.7680], 13);
 
-            // Clean cartographic map layer
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; OpenStreetMap contributors'
+            // Clean, elegant English map layer (CartoDB Voyager)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; CartoDB &copy; OpenStreetMap',
+                subdomains: 'abcd',
+                maxZoom: 19
             }).addTo(map);
 
             markersLayer = L.layerGroup().addTo(map);
             routeLayer = L.layerGroup().addTo(map);
 
             renderPlacesList();
+            renderCardsGallery();
             updateMapMarkers();
 
             setTimeout(() => { map.invalidateSize(); }, 300);
@@ -440,8 +473,8 @@
                         <input type="checkbox" ${isChecked ? 'checked' : ''} class="mt-0.5 w-4 h-4 accent-charcoal rounded cursor-pointer pointer-events-none">
                         <div>
                             <h4 class="font-medium text-xs text-charcoal tracking-wide">${place.name}</h4>
-                            <p class="text-[11px] text-charcoal-muted mt-0.5 leading-snug font-light">${place.desc}</p>
-                            <span class="inline-block mt-1 text-[10px] text-gold-dark font-mono font-medium">Suggested stay: ${place.duration} mins</span>
+                            <p class="text-[11px] text-charcoal-muted mt-0.5 leading-snug font-light line-clamp-1">${place.desc}</p>
+                            <span class="inline-block mt-1 text-[10px] text-gold-dark font-mono font-medium">Suggested: ${place.duration} mins</span>
                         </div>
                     </div>
                 `;
@@ -451,14 +484,45 @@
             document.getElementById('selectedCount').innerText = `${selectedPlaceIds.length} selected`;
         }
 
-        // Toggle place and IMMEDIATELY update map
+        function renderCardsGallery() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+
+            places.forEach(place => {
+                const card = document.createElement('div');
+                card.className = "luxury-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between group";
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-56 overflow-hidden">
+                            <img src="${place.image}" alt="${place.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent"></div>
+                            <span class="absolute top-4 right-4 bg-cream/90 backdrop-blur-md text-charcoal text-[9px] uppercase tracking-widest px-3 py-1 rounded-full font-medium">
+                                ${place.category}
+                            </span>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <h3 class="font-serif text-xl text-charcoal font-normal">${place.name}</h3>
+                            <p class="text-xs text-charcoal-muted leading-relaxed font-light line-clamp-2">${place.desc}</p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 border-t border-gold/15 mt-2 flex items-center justify-between">
+                        <span class="text-[10px] font-mono text-gold-dark"><i class="fa-regular fa-clock mr-1"></i>${place.duration} mins</span>
+                        <button onclick="openModal(${place.id})" class="text-[11px] uppercase tracking-wider text-charcoal hover:text-gold transition-colors flex items-center font-medium">
+                            <span>Explore Details</span>
+                            <i class="fa-solid fa-arrow-right ml-1.5 text-[9px]"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
         function togglePlace(id) {
             if (selectedPlaceIds.includes(id)) {
                 selectedPlaceIds = selectedPlaceIds.filter(item => item !== id);
             } else {
                 selectedPlaceIds.push(id);
             }
-            // Clear existing calculated polyline route when selection changes
             routeLayer.clearLayers();
             document.getElementById('resultsCard').classList.add('hidden');
 
@@ -478,14 +542,12 @@
             renderPlacesList(cat);
         }
 
-        // Refined minimal marker pin on map
         function updateMapMarkers() {
             markersLayer.clearLayers();
             const groupCoords = [];
 
             places.forEach(place => {
                 if (selectedPlaceIds.includes(place.id)) {
-                    // Refined circular gold/charcoal ring marker
                     const marker = L.circleMarker([place.lat, place.lng], {
                         radius: 7,
                         fillColor: "#B39366",
@@ -494,8 +556,8 @@
                         opacity: 1,
                         fillOpacity: 0.95
                     }).bindPopup(`
-                        <div class="p-1">
-                            <h5 style="font-family:'Cinzel', serif; font-size:12px; margin:0 0 4px 0; color:#1C1C1A;">${place.name}</h5>
+                        <div style="padding:4px;">
+                            <h5 style="font-family:'Playfair Display', serif; font-size:13px; margin:0 0 4px 0; color:#1C1C1A;">${place.name}</h5>
                             <p style="font-size:11px; margin:0; color:#5A5A55; line-height:1.4;">${place.desc}</p>
                         </div>
                     `);
@@ -513,22 +575,24 @@
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
-        function optimizeRoute() {
+        async function optimizeRoute() {
             if (selectedPlaceIds.length < 2) {
                 alert("Please select at least 2 highlights to compose an itinerary.");
                 return;
             }
 
+            const btn = document.getElementById('optimizeBtn');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i><span>Routing Streets...</span>`;
+
             const selectedSpots = places.filter(p => selectedPlaceIds.includes(p.id));
 
+            // Permutations for ideal ordering
             function permute(arr) {
                 if (arr.length <= 1) return [arr];
                 let res = [];
@@ -554,24 +618,37 @@
                 }
             });
 
-            renderResults(bestPath, minDistance);
+            // Fetch Real Street Walking Route via OSRM
+            try {
+                const coordsString = bestPath.map(p => `${p.lng},${p.lat}`).join(';');
+                const response = await fetch(`https://router.project-osrm.org/route/v1/foot/${coordsString}?overview=full&geometries=geojson`);
+                const data = await response.json();
+
+                if (data.routes && data.routes.length > 0) {
+                    const streetCoords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+                    const actualDistKm = (data.routes[0].distance / 1000).toFixed(2);
+                    renderResults(bestPath, actualDistKm, streetCoords);
+                } else {
+                    renderResults(bestPath, minDistance.toFixed(2), null);
+                }
+            } catch (e) {
+                // Fallback to straight segments if network timeout
+                renderResults(bestPath, minDistance.toFixed(2), null);
+            } finally {
+                btn.innerHTML = `<span>Generate Optimal Schedule</span>`;
+            }
         }
 
-        function renderResults(optimalPath, totalDist) {
+        function renderResults(optimalPath, totalDistKm, streetCoordinates) {
             document.getElementById('resultsCard').classList.remove('hidden');
             const timeline = document.getElementById('timelineContainer');
             timeline.innerHTML = '';
 
-            let currentMinutes = 10 * 60; // 10:00 AM leisurely start
-            const polylinePoints = [];
-
+            let currentMinutes = 10 * 60; // 10:00 AM start
             routeLayer.clearLayers();
             markersLayer.clearLayers();
 
             optimalPath.forEach((spot, idx) => {
-                polylinePoints.push([spot.lat, spot.lng]);
-
-                // Elegant numbered icon
                 const customIcon = L.divIcon({
                     className: 'luxury-marker-pin',
                     html: `${idx + 1}`,
@@ -601,16 +678,39 @@
                 `;
                 timeline.appendChild(item);
 
-                currentMinutes += spot.duration + 15; // 15 mins ambient walk
+                currentMinutes += spot.duration + 15;
             });
 
-            // Refined thin gold/charcoal route line
-            const line = L.polyline(polylinePoints, { color: '#B39366', weight: 3, opacity: 0.9, dashArray: '5, 8' }).addTo(routeLayer);
+            // Draw Real Street Route Polyline
+            const linePoints = streetCoordinates || optimalPath.map(p => [p.lat, p.lng]);
+            const line = L.polyline(linePoints, { color: '#B39366', weight: 3.5, opacity: 0.95 }).addTo(routeLayer);
             map.fitBounds(line.getBounds(), { padding: [50, 50] });
 
-            document.getElementById('totalDistance').innerText = `Walking: ${totalDist.toFixed(2)} km`;
+            document.getElementById('totalDistance').innerText = `Walking: ${totalDistKm} km`;
             const totalHours = ((currentMinutes - (10 * 60)) / 60).toFixed(1);
             document.getElementById('totalDuration').innerText = `Duration: ~${totalHours} hrs`;
+        }
+
+        // Modal Handlers
+        function openModal(id) {
+            const place = places.find(p => p.id === id);
+            if (!place) return;
+
+            document.getElementById('modalImg').src = place.image;
+            document.getElementById('modalCategory').innerText = place.category;
+            document.getElementById('modalTitle').innerText = place.name;
+            document.getElementById('modalDesc').innerText = place.desc;
+            document.getElementById('modalDuration').innerHTML = `<i class="fa-regular fa-clock mr-1 text-gold"></i> Suggested visit: ${place.duration} mins`;
+
+            const modal = document.getElementById('placeModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('modalBox').classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('placeModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('modalBox').classList.add('scale-95');
         }
 
         window.onload = initMap;
