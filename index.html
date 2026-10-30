@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl" class="scroll-smooth">
+<html lang="en" dir="ltr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TLV Route Optimizer | אלגוריתם תכנון מסלול חכם בתל אביב</title>
+    <title>TLV Navigator | Curated Urban Day Trip Planner</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Heebo & Cinzel -->
+    <!-- Premium Google Fonts: Playfair Display, Cinzel, Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Leaflet Map CSS & JS -->
@@ -21,32 +21,28 @@
             theme: {
                 extend: {
                     colors: {
-                        olive: {
-                            DEFAULT: '#EDE8D0',
-                            dark: '#DDD7BC',
-                            light: '#F5F1DF',
-                        },
                         sand: {
-                            DEFAULT: '#F9F8F3',
-                            muted: '#EFECE6',
-                            dark: '#E2DDD3',
+                            DEFAULT: '#FBF9F5',
+                            card: '#FFFFFF',
+                            muted: '#F0ECE1',
                         },
-                        azure: {
-                            DEFAULT: '#4A7C59',
-                            dark: '#35593F',
-                            light: '#6B9D79',
-                            soft: '#EAF2EC',
+                        emeraldBrand: {
+                            DEFAULT: '#2D5A46',
+                            dark: '#1E3E30',
+                            light: '#427A60',
+                            soft: '#EDF5F1',
                         },
-                        gold: {
+                        goldAccent: {
                             DEFAULT: '#C5A880',
-                            light: '#D4BD9B',
-                            dark: '#A38760',
+                            light: '#E5D6C3',
+                            dark: '#9E825D',
                         },
-                        charcoal: '#222222'
+                        charcoal: '#1A1A1A'
                     },
                     fontFamily: {
-                        luxury: ['Cinzel', 'serif'],
-                        sans: ['Heebo', 'sans-serif'],
+                        brand: ['Playfair Display', 'serif'],
+                        subbrand: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
                     }
                 }
             }
@@ -55,159 +51,181 @@
 
     <style>
         body {
-            background-color: #F9F8F3;
-            color: #222222;
-            font-family: 'Heebo', sans-serif;
+            background-color: #FBF9F5;
+            color: #1A1A1A;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         .glass-header {
-            background: rgba(249, 248, 243, 0.94);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(74, 124, 89, 0.2);
+            background: rgba(251, 249, 245, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(45, 90, 70, 0.12);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(197, 168, 128, 0.3);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(197, 168, 128, 0.25);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.04);
         }
 
         #map {
-            height: 520px;
+            height: 540px;
             width: 100%;
             border-radius: 1.25rem;
             z-index: 10;
         }
 
-        .custom-div-icon {
-            background: #4A7C59;
-            color: white;
+        .custom-route-marker {
+            background: #2D5A46;
+            color: #FFFFFF;
             border-radius: 50%;
-            border: 2px solid white;
-            font-weight: bold;
+            border: 2px solid #FFFFFF;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-            font-size: 12px;
+            box-shadow: 0 4px 12px rgba(45, 90, 70, 0.35);
+            font-size: 13px;
         }
 
         ::-webkit-scrollbar {
             width: 6px;
-            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #EDE8D0;
+            background: #F0ECE1;
         }
         ::-webkit-scrollbar-thumb {
-            background: #4A7C59;
-            border-radius: 3px;
+            background: #2D5A46;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body class="antialiased text-charcoal">
 
-    <!-- Header & Navigation -->
-    <header class="fixed top-0 left-0 right-0 z-50 py-4 px-6 lg:px-16 text-charcoal glass-header shadow-sm">
-        <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-azure/30 via-azure to-azure/30"></div>
-
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 py-4 px-6 lg:px-16 text-charcoal glass-header transition-all">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="#hero" class="flex flex-col items-start group">
-                <span class="font-luxury text-2xl lg:text-3xl tracking-[0.2em] text-charcoal group-hover:text-azure transition-colors uppercase font-medium">TLV OPTIMIZER</span>
-                <span class="text-[9px] tracking-[0.3em] text-azure-dark uppercase -mt-1 font-semibold">Urban Route & TSP Engine</span>
+                <span class="font-brand text-2xl lg:text-3xl tracking-wider text-charcoal group-hover:text-emeraldBrand transition-colors font-bold">
+                    TLV Navigator
+                </span>
+                <span class="font-subbrand text-[10px] tracking-[0.3em] text-emeraldBrand uppercase font-semibold -mt-1">
+                    Curated City Itineraries
+                </span>
             </a>
 
-            <nav class="hidden md:flex items-center space-x-reverse space-x-8 text-xs uppercase tracking-widest font-normal">
-                <a href="#hero" class="hover:text-azure transition-colors py-1">אודות המערכת</a>
-                <a href="#planner" class="hover:text-azure transition-colors py-1">מתכנן המסלול</a>
-                <a href="#algorithm" class="hover:text-azure transition-colors py-1">האלגוריתם (TSP-TW)</a>
+            <nav class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-medium">
+                <a href="#hero" class="hover:text-emeraldBrand transition-colors py-1">Experience</a>
+                <a href="#planner" class="hover:text-emeraldBrand transition-colors py-1">Interactive Planner</a>
+                <a href="#features" class="hover:text-emeraldBrand transition-colors py-1">How It Works</a>
             </nav>
 
-            <a href="#planner" class="bg-azure hover:bg-azure-dark text-white font-medium text-xs px-5 py-2.5 rounded-full transition-all flex items-center shadow-md tracking-wider">
-                <span>בנה מסלול אופטימלי</span>
+            <a href="#planner" class="bg-emeraldBrand hover:bg-emeraldBrand-dark text-white text-xs font-semibold px-6 py-3 rounded-full transition-all shadow-md hover:shadow-emeraldBrand/25 tracking-wider">
+                Plan My Route
             </a>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section id="hero" class="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-sand pt-28 pb-16">
-        <div class="max-w-5xl mx-auto text-center px-6 relative z-10">
-            <span class="inline-block border border-azure/40 bg-sand/80 backdrop-blur-md text-azure-dark tracking-[0.3em] uppercase text-xs font-medium px-4 py-1.5 rounded-full mb-6">
-                OPERATIONS RESEARCH • TRAVELING SALESPERSON WITH TIME WINDOWS
-            </span>
-            <h1 class="font-luxury text-4xl sm:text-6xl md:text-7xl text-charcoal font-normal leading-tight mb-6">
-                Bespoke Urban Routing
+    <section id="hero" class="relative min-h-[75vh] flex items-center justify-center overflow-hidden bg-sand pt-32 pb-20">
+        <!-- Subtle Background Glow -->
+        <div class="absolute inset-0 z-0 opacity-40 bg-[radial-gradient(#2D5A46_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        
+        <div class="max-w-4xl mx-auto text-center px-6 relative z-10">
+            <div class="inline-flex items-center space-x-2 border border-emeraldBrand/20 bg-emeraldBrand-soft/80 backdrop-blur-md text-emeraldBrand px-4 py-1.5 rounded-full mb-6">
+                <i class="fa-solid fa-sparkles text-xs"></i>
+                <span class="text-xs uppercase tracking-widest font-semibold">Smart Urban Route Planner</span>
+            </div>
+            
+            <h1 class="font-brand text-4xl sm:text-6xl md:text-7xl text-charcoal font-semibold leading-[1.15] mb-6">
+                Explore Tel Aviv at <br class="hidden sm:inline" />
+                <span class="italic font-normal text-emeraldBrand">Your Perfect Pace</span>
             </h1>
-            <p class="text-charcoal/80 text-base md:text-xl font-light max-w-2xl mx-auto leading-relaxed mb-8">
-                אלגוריתם חכם למיטוב סיור יום בתל אביב. בחרו נקודות עניין, והמערכת תחשב עבורכם את סדר הביקור המושלם שממזער זמני הליכה ועומד בחלונות זמן של פתיחה וסגירה.
+
+            <p class="text-charcoal/70 text-base md:text-xl font-normal max-w-2xl mx-auto leading-relaxed mb-10">
+                Choose your favorite highlights across Tel Aviv. Our intelligent planner automatically calculates the smoothest walking order, saving transit time so you can soak in every moment.
             </p>
-            <div class="flex flex-wrap justify-center gap-4 text-xs font-mono text-charcoal/70">
-                <span class="bg-olive/60 px-3 py-1.5 rounded-md border border-gold/30"><i class="fa-solid fa-code-branch text-azure ml-1"></i> TSP-TW Solver</span>
-                <span class="bg-olive/60 px-3 py-1.5 rounded-md border border-gold/30"><i class="fa-solid fa-person-walking text-azure ml-1"></i> Haversine Transit Metric</span>
-                <span class="bg-olive/60 px-3 py-1.5 rounded-md border border-gold/30"><i class="fa-solid fa-clock text-azure ml-1"></i> Time-Window Feasibility</span>
+
+            <div class="flex flex-wrap justify-center gap-4 text-xs font-medium text-charcoal/80 mb-8">
+                <span class="bg-white/90 border border-goldAccent/40 px-4 py-2 rounded-full shadow-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-person-walking text-emeraldBrand"></i>
+                    <span>Shortest Walking Paths</span>
+                </span>
+                <span class="bg-white/90 border border-goldAccent/40 px-4 py-2 rounded-full shadow-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-clock text-emeraldBrand"></i>
+                    <span>Opening Hours Synchronized</span>
+                </span>
+                <span class="bg-white/90 border border-goldAccent/40 px-4 py-2 rounded-full shadow-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-route text-emeraldBrand"></i>
+                    <span>Seamless Daily Flow</span>
+                </span>
             </div>
         </div>
     </section>
 
     <!-- Planner Section -->
-    <section id="planner" class="py-12 px-4 md:px-12 lg:px-20 bg-sand border-t border-gold/20">
+    <section id="planner" class="py-16 px-4 md:px-12 lg:px-20 bg-sand border-t border-goldAccent/20">
         <div class="max-w-7xl mx-auto">
 
             <!-- Category Filter Tabs -->
-            <div class="flex items-center justify-center space-x-reverse space-x-2 overflow-x-auto pb-6 text-xs">
-                <button onclick="filterCategory('all')" class="cat-btn active whitespace-nowrap bg-azure text-white px-5 py-2 rounded-full transition-all shadow-sm">הכל</button>
-                <button onclick="filterCategory('culture')" class="cat-btn whitespace-nowrap border border-azure/40 text-charcoal px-5 py-2 rounded-full hover:bg-azure hover:text-white transition-all">תרבות ואמנות</button>
-                <button onclick="filterCategory('food')" class="cat-btn whitespace-nowrap border border-azure/40 text-charcoal px-5 py-2 rounded-full hover:bg-azure hover:text-white transition-all">שווקים וקולינריה</button>
-                <button onclick="filterCategory('vibes')" class="cat-btn whitespace-nowrap border border-azure/40 text-charcoal px-5 py-2 rounded-full hover:bg-azure hover:text-white transition-all">סמטאות ונופים</button>
-                <button onclick="filterCategory('coastal')" class="cat-btn whitespace-nowrap border border-azure/40 text-charcoal px-5 py-2 rounded-full hover:bg-azure hover:text-white transition-all">רצועת חוף</button>
+            <div class="flex items-center justify-center space-x-2 overflow-x-auto pb-8 text-xs">
+                <button onclick="filterCategory('all', this)" class="cat-btn active whitespace-nowrap bg-emeraldBrand text-white px-5 py-2.5 rounded-full transition-all shadow-sm font-medium">All Highlights</button>
+                <button onclick="filterCategory('culture', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Culture & Art</button>
+                <button onclick="filterCategory('food', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Markets & Food</button>
+                <button onclick="filterCategory('vibes', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Streets & Vibe</button>
+                <button onclick="filterCategory('coastal', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Beach & Port</button>
             </div>
 
-            <!-- Main Interactive Split View -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mt-4">
+            <!-- Planner Split View -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                <!-- Left Column: Places Selection Grid -->
+                <!-- Left: Places Checklist -->
                 <div class="lg:col-span-5 space-y-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-luxury text-xl text-charcoal">בחר תחנות לסיור</h3>
-                        <span id="selectedCount" class="text-xs font-mono bg-azure-soft text-azure-dark px-3 py-1 rounded-full border border-azure/30">0 תחנות נבחרו</span>
+                    <div class="flex justify-between items-center px-1">
+                        <div>
+                            <h3 class="font-brand text-2xl text-charcoal font-semibold">Select Your Stops</h3>
+                            <p class="text-xs text-charcoal/60 mt-0.5">Pick the places you wish to visit today</p>
+                        </div>
+                        <span id="selectedCount" class="text-xs font-semibold bg-emeraldBrand-soft text-emeraldBrand px-3 py-1.5 rounded-full border border-emeraldBrand/20">
+                            3 selected
+                        </span>
                     </div>
 
-                    <div class="space-y-3 max-h-[620px] overflow-y-auto pr-1" id="placesList">
-                        <!-- Items rendered dynamically via JS -->
+                    <div class="space-y-3 max-h-[580px] overflow-y-auto pr-1" id="placesList">
+                        <!-- Loaded dynamically via JS -->
                     </div>
 
-                    <button onclick="optimizeRoute()" class="w-full bg-azure hover:bg-azure-dark text-white py-4 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center space-x-reverse space-x-2 text-sm tracking-wider">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>חשב מסלול אופטימלי (Run Optimizer)</span>
+                    <button onclick="optimizeRoute()" class="w-full bg-emeraldBrand hover:bg-emeraldBrand-dark text-white py-4 rounded-2xl font-semibold transition-all shadow-lg flex items-center justify-center space-x-2 text-sm tracking-wide">
+                        <i class="fa-solid fa-wand-magic-sparkles text-goldAccent"></i>
+                        <span>Generate Optimal Schedule</span>
                     </button>
                 </div>
 
-                <!-- Right Column: Interactive Map & Live Timetable -->
+                <!-- Right: Map & Generated Timeline -->
                 <div class="lg:col-span-7 space-y-6">
-                    <!-- Leaflet Map Container -->
-                    <div class="glass-card p-3 rounded-2xl">
+                    <!-- Interactive Leaflet Map -->
+                    <div class="glass-card p-3 rounded-3xl shadow-sm">
                         <div id="map"></div>
                     </div>
 
-                    <!-- Result Itinerary Card -->
-                    <div id="resultsCard" class="glass-card p-6 rounded-2xl hidden">
-                        <div class="flex justify-between items-center border-b border-gold/30 pb-4 mb-4">
+                    <!-- Optimized Schedule Result -->
+                    <div id="resultsCard" class="glass-card p-6 md:p-8 rounded-3xl hidden">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-goldAccent/25 pb-5 mb-6 gap-3">
                             <div>
-                                <span class="text-xs uppercase tracking-widest text-azure-dark font-mono block">Optimal Schedule</span>
-                                <h3 class="font-luxury text-2xl text-charcoal">לוח זמנים ממוטב לסיור</h3>
+                                <span class="text-xs uppercase tracking-widest text-emeraldBrand font-semibold block">Curated Daily Schedule</span>
+                                <h3 class="font-brand text-2xl text-charcoal font-semibold">Your Tailored Day Tour</h3>
                             </div>
-                            <div class="text-left font-mono text-xs">
-                                <div class="text-azure font-semibold" id="totalDistance">מרחק: 0 ק״מ</div>
-                                <div class="text-charcoal/70" id="totalDuration">זמן מוערך: 0 שעות</div>
+                            <div class="flex items-center space-x-3 text-xs">
+                                <span class="bg-emeraldBrand-soft text-emeraldBrand px-3.5 py-1.5 rounded-full font-semibold" id="totalDistance">Total: 0 km</span>
+                                <span class="bg-sand-muted text-charcoal/80 px-3.5 py-1.5 rounded-full font-medium" id="totalDuration">Duration: ~0 hrs</span>
                             </div>
                         </div>
 
-                        <!-- Timeline -->
+                        <!-- Schedule Timeline List -->
                         <div id="timelineContainer" class="space-y-4">
-                            <!-- Injected by JS -->
+                            <!-- Injected dynamically via JS -->
                         </div>
                     </div>
                 </div>
@@ -216,37 +234,43 @@
         </div>
     </section>
 
-    <!-- Algorithmic Details Section -->
-    <section id="algorithm" class="py-20 px-6 md:px-12 lg:px-24 bg-olive/30 border-t border-gold/20">
+    <!-- How It Works Section -->
+    <section id="features" class="py-20 px-6 md:px-12 lg:px-24 bg-white border-t border-goldAccent/20">
         <div class="max-w-5xl mx-auto">
-            <div class="text-center space-y-3 mb-12">
-                <span class="text-xs uppercase tracking-[0.3em] text-azure-dark font-mono font-semibold">ALGORITHMIC ARCHITECTURE</span>
-                <h2 class="font-luxury text-3xl sm:text-4xl text-charcoal">כיצד מחושב המסלול?</h2>
-                <div class="w-16 h-[1px] bg-gold mx-auto mt-2"></div>
+            <div class="text-center space-y-3 mb-14">
+                <span class="text-xs uppercase tracking-[0.25em] text-emeraldBrand font-semibold">Effortless Exploration</span>
+                <h2 class="font-brand text-3xl sm:text-4xl text-charcoal font-semibold">How TLV Navigator Works</h2>
+                <div class="w-16 h-[2px] bg-goldAccent mx-auto mt-2"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
-                <div class="glass-card p-6 rounded-2xl space-y-3">
-                    <div class="w-10 h-10 rounded-full bg-azure/10 flex items-center justify-center text-azure font-bold font-mono">01</div>
-                    <h4 class="font-luxury text-lg text-charcoal font-semibold">מטריצת מרחקים (Haversine)</h4>
-                    <p class="text-xs text-charcoal/80 leading-relaxed font-light">
-                        חישוב המרחק הגיאוגרפי והזמני בין כל זוג נקודות נבחרות על בסיס קואורדינטות אורך ורוחב מותאמות לקצב הליכה עירוני ממוצע (4.5 קמ״ש).
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-6 rounded-2xl bg-sand/60 border border-goldAccent/20 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emeraldBrand/10 flex items-center justify-center text-emeraldBrand text-xl">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </div>
+                    <h4 class="font-brand text-xl text-charcoal font-semibold">1. Choose Attractions</h4>
+                    <p class="text-xs text-charcoal/70 leading-relaxed">
+                        Select historic landmarks, food markets, quiet beach strips, and cultural institutions you wish to experience.
                     </p>
                 </div>
 
-                <div class="glass-card p-6 rounded-2xl space-y-3">
-                    <div class="w-10 h-10 rounded-full bg-azure/10 flex items-center justify-center text-azure font-bold font-mono">02</div>
-                    <h4 class="font-luxury text-lg text-charcoal font-semibold">אילוצי זמן (Time Windows)</h4>
-                    <p class="text-xs text-charcoal/80 leading-relaxed font-light">
-                        בדיקת היתכנות (Feasibility): כל אתר כולל חלון שעות ביקור מומלץ וזמן שהייה משוער. האלגוריתם מונע הגעה לאתרים סגורים ומסדר את היום ברצף הגיוני.
+                <div class="p-6 rounded-2xl bg-sand/60 border border-goldAccent/20 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emeraldBrand/10 flex items-center justify-center text-emeraldBrand text-xl">
+                        <i class="fa-solid fa-route"></i>
+                    </div>
+                    <h4 class="font-brand text-xl text-charcoal font-semibold">2. Smart Walking Route</h4>
+                    <p class="text-xs text-charcoal/70 leading-relaxed">
+                        The engine rearranges your stops in the shortest order, eliminating backtracking and unnecessary walking in the sun.
                     </p>
                 </div>
 
-                <div class="glass-card p-6 rounded-2xl space-y-3">
-                    <div class="w-10 h-10 rounded-full bg-azure/10 flex items-center justify-center text-azure font-bold font-mono">03</div>
-                    <h4 class="font-luxury text-lg text-charcoal font-semibold">מיטוב מסלול (Heuristic Search)</h4>
-                    <p class="text-xs text-charcoal/80 leading-relaxed font-light">
-                        הרצת בדיקת פרמוטציות חכמה הממזערת את זמן ההליכה המצטבר תוך שמירה על כללי ה-Constraint Programming לקבלת מסלול סיור רציף וזורם.
+                <div class="p-6 rounded-2xl bg-sand/60 border border-goldAccent/20 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emeraldBrand/10 flex items-center justify-center text-emeraldBrand text-xl">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <h4 class="font-brand text-xl text-charcoal font-semibold">3. Ready-To-Go Itinerary</h4>
+                    <p class="text-xs text-charcoal/70 leading-relaxed">
+                        Get a clear, hour-by-hour itinerary designed around venue opening times, giving you a smooth, stress-free day in the city.
                     </p>
                 </div>
             </div>
@@ -254,305 +278,12 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-charcoal text-white/80 py-10 px-6 text-center text-xs font-light">
-        <div class="max-w-7xl mx-auto space-y-3">
-            <div class="font-luxury text-lg tracking-[0.25em] text-white uppercase font-medium">TLV ROUTE OPTIMIZER</div>
-            <p class="text-white/50">Operations Research & Urban Exploration Platform • Tel Aviv</p>
-            <div class="pt-4 border-t border-white/10 text-white/40">
-                &copy; Open Source Project for GitHub Portfolio | Developed with Leaflet & Tailwind
+    <footer class="bg-charcoal text-white/80 py-12 px-6 text-center text-xs">
+        <div class="max-w-7xl mx-auto space-y-4">
+            <div class="font-brand text-2xl tracking-wider text-white font-semibold">TLV Navigator</div>
+            <p class="text-white/50 max-w-md mx-auto">
+                A clean, intuitive daily route and schedule planner for discovering the vibrant culture of Tel Aviv.
+            </p>
+            <div class="pt-6 border-t border-white/10 text-white/60 text-xs">
+                Designed & Developed by <span class="text-white font-semibold underline decoration-goldAccent decoration-2 underline-offset-4">Sahar Frank</span>
             </div>
-        </div>
-    </footer>
-
-    <!-- Application Logic Script -->
-    <script>
-        // Database of curated spots in Tel Aviv with coordinates and operating time windows
-        const places = [
-            {
-                id: 1,
-                name: "מוזיאון תל אביב לאמנות",
-                category: "culture",
-                lat: 32.0776,
-                lng: 34.7870,
-                duration: 90, // minutes
-                openHour: 10,
-                closeHour: 18,
-                desc: "מרכז התרבות המוביל בעיר עם תערוכות אמנות מודרנית ועיצוב."
-            },
-            {
-                id: 2,
-                name: "שוק הכרמל וכרם התימנים",
-                category: "food",
-                lat: 32.0673,
-                lng: 34.7674,
-                duration: 75,
-                openHour: 9,
-                closeHour: 17,
-                desc: "סיור טעימות ססגוני, דוכני שף אותנטיים וסמטאות היסטוריות."
-            },
-            {
-                id: 3,
-                name: "שדרות רוטשילד והבאוהאוס",
-                category: "vibes",
-                lat: 32.0636,
-                lng: 34.7735,
-                duration: 60,
-                openHour: 8,
-                closeHour: 22,
-                desc: "שדרה עתירת עצי פיקוס, ארכיטקטורת העיר הלבנה ובתי קפה שוקקים."
-            },
-            {
-                id: 4,
-                name: "נמל יפו וסמטאות יפו העתיקה",
-                category: "vibes",
-                lat: 32.0538,
-                lng: 34.7508,
-                duration: 90,
-                openHour: 9,
-                closeHour: 21,
-                desc: "גלריות אמנים, תצפית פנורמית על קו החוף ומסורת ים תיכונית עתיקה."
-            },
-            {
-                id: 5,
-                name: "שוק לוינסקי ופלורנטין",
-                category: "food",
-                lat: 32.0588,
-                lng: 34.7725,
-                duration: 60,
-                openHour: 9,
-                closeHour: 19,
-                desc: "מעדניות תבלינים בלקניות, קולינריה מקומית ואמנות רחוב בועטת."
-            },
-            {
-                id: 6,
-                name: "טיילת החוף ופארק צ'ארלס קלור",
-                category: "coastal",
-                lat: 32.0628,
-                lng: 34.7588,
-                duration: 45,
-                openHour: 7,
-                closeHour: 23,
-                desc: "בריזה ים-תיכונית, שקיעות זהובות ומרחב פתוח מול הים."
-            },
-            {
-                id: 7,
-                name: "מרכז סוזן דלל ונווה צדק",
-                category: "culture",
-                lat: 32.0597,
-                lng: 34.7632,
-                duration: 60,
-                openHour: 9,
-                closeHour: 20,
-                desc: "השכונה היהודית הראשונה מחוץ ליפו, בוטיקים ואדריכלות תקופתית."
-            },
-            {
-                id: 8,
-                name: "נמל תל אביב ויריד המזרח",
-                category: "coastal",
-                lat: 32.0975,
-                lng: 34.7739,
-                duration: 60,
-                openHour: 9,
-                closeHour: 22,
-                desc: "דק העץ הגלי המפורסם, חנויות בוטיק ומסעדות מול הגלים."
-            }
-        ];
-
-        let selectedPlaceIds = [1, 2, 3]; // Default selection
-        let map;
-        let markersLayer;
-        let routeLayer;
-
-        // Initialize Map
-        function initMap() {
-            map = L.map('map').setView([32.0750, 34.7750], 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; CartoDB &copy; OpenStreetMap'
-            }).addTo(map);
-
-            markersLayer = L.layerGroup().addTo(map);
-            routeLayer = L.layerGroup().addTo(map);
-            renderPlacesList();
-            updateMapMarkers();
-        }
-
-        // Render Selection Cards
-        function renderPlacesList(filter = 'all') {
-            const listEl = document.getElementById('placesList');
-            listEl.innerHTML = '';
-
-            places.forEach(place => {
-                if (filter !== 'all' && place.category !== filter) return;
-
-                const isChecked = selectedPlaceIds.includes(place.id);
-                const item = document.createElement('div');
-                item.className = `p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
-                    isChecked ? 'border-azure bg-azure-soft/60 shadow-sm' : 'border-gray-200 bg-white hover:border-azure/40'
-                }`;
-                item.onclick = () => togglePlace(place.id);
-
-                item.innerHTML = `
-                    <div class="flex items-center space-x-reverse space-x-3">
-                        <input type="checkbox" ${isChecked ? 'checked' : ''} class="w-4 h-4 accent-azure cursor-pointer pointer-events-none">
-                        <div>
-                            <h4 class="font-medium text-sm text-charcoal">${place.name}</h4>
-                            <p class="text-xs text-charcoal/60 mt-0.5">${place.desc}</p>
-                            <span class="inline-block mt-1 text-[10px] text-azure-dark font-mono">חלון שעות: ${place.openHour}:00 - ${place.closeHour}:00 | משך: ${place.duration} דק'</span>
-                        </div>
-                    </div>
-                `;
-                listEl.appendChild(item);
-            });
-
-            document.getElementById('selectedCount').innerText = `${selectedPlaceIds.length} תחנות נבחרו`;
-        }
-
-        function togglePlace(id) {
-            if (selectedPlaceIds.includes(id)) {
-                selectedPlaceIds = selectedPlaceIds.filter(item => item !== id);
-            } else {
-                selectedPlaceIds.push(id);
-            }
-            renderPlacesList();
-            updateMapMarkers();
-        }
-
-        function filterCategory(cat) {
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-azure', 'text-white');
-                btn.classList.add('border', 'border-azure/40', 'text-charcoal');
-            });
-            event.target.classList.remove('border', 'border-azure/40', 'text-charcoal');
-            event.target.classList.add('bg-azure', 'text-white');
-            renderPlacesList(cat);
-        }
-
-        function updateMapMarkers() {
-            markersLayer.clearLayers();
-            places.forEach(place => {
-                if (selectedPlaceIds.includes(place.id)) {
-                    const marker = L.circleMarker([place.lat, place.lng], {
-                        radius: 8,
-                        fillColor: "#4A7C59",
-                        color: "#fff",
-                        weight: 2,
-                        opacity: 1,
-                        fillOpacity: 0.9
-                    }).bindPopup(`<b>${place.name}</b><br>${place.desc}`);
-                    markersLayer.addLayer(marker);
-                }
-            });
-        }
-
-        // Distance Calculation (Haversine formula in KM)
-        function haversineDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth radius in km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // Optimization Engine (TSP with permutations)
-        function optimizeRoute() {
-            if (selectedPlaceIds.length < 2) {
-                alert("אנא בחרו לפחות 2 תחנות להרצת האופטימיזציה.");
-                return;
-            }
-
-            const selectedSpots = places.filter(p => selectedPlaceIds.includes(p.id));
-
-            // Generate all permutations for TSP (practical for n <= 8)
-            function permute(arr) {
-                if (arr.length <= 1) return [arr];
-                let res = [];
-                for (let i = 0; i < arr.length; i++) {
-                    const rest = permute(arr.slice(0, i).concat(arr.slice(i + 1)));
-                    for (let r of rest) res.push([arr[i]].concat(r));
-                }
-                return res;
-            }
-
-            const allPaths = permute(selectedSpots);
-            let bestPath = null;
-            let minDistance = Infinity;
-
-            allPaths.forEach(path => {
-                let dist = 0;
-                for (let i = 0; i < path.length - 1; i++) {
-                    dist += haversineDistance(path[i].lat, path[i].lng, path[i+1].lat, path[i+1].lng);
-                }
-                if (dist < minDistance) {
-                    minDistance = dist;
-                    bestPath = path;
-                }
-            });
-
-            renderResults(bestPath, minDistance);
-        }
-
-        function renderResults(optimalPath, totalDist) {
-            document.getElementById('resultsCard').classList.remove('hidden');
-            const timeline = document.getElementById('timelineContainer');
-            timeline.innerHTML = '';
-
-            let currentMinutes = 10 * 60; // Start trip at 10:00 AM
-            const polylinePoints = [];
-
-            routeLayer.clearLayers();
-            markersLayer.clearLayers();
-
-            optimalPath.forEach((spot, idx) => {
-                polylinePoints.push([spot.lat, spot.lng]);
-
-                // Create numbered marker
-                const customIcon = L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `${idx + 1}`,
-                    iconSize: [26, 26]
-                });
-                L.marker([spot.lat, spot.lng], { icon: customIcon })
-                    .bindPopup(`<b>תחנה ${idx+1}: ${spot.name}</b>`)
-                    .addTo(routeLayer);
-
-                const hours = Math.floor(currentMinutes / 60);
-                const mins = currentMinutes % 60;
-                const timeStr = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
-
-                const item = document.createElement('div');
-                item.className = "flex items-start space-x-reverse space-x-4 border-r-2 border-azure pr-4 relative";
-                item.innerHTML = `
-                    <div class="absolute -right-[7px] top-1.5 w-3 h-3 rounded-full bg-azure"></div>
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <h5 class="font-medium text-sm text-charcoal">תחנה ${idx + 1}: ${spot.name}</h5>
-                            <span class="font-mono text-xs text-azure font-semibold">${timeStr}</span>
-                        </div>
-                        <p class="text-xs text-charcoal/60 mt-1">${spot.desc}</p>
-                        <span class="text-[10px] text-charcoal/50 font-mono">זמן ביקור מוערך: ${spot.duration} דקות</span>
-                    </div>
-                `;
-                timeline.appendChild(item);
-
-                // Add stay duration + 15 min transit
-                currentMinutes += spot.duration + 15;
-            });
-
-            // Draw polyline on map
-            const line = L.polyline(polylinePoints, { color: '#4A7C59', weight: 4, opacity: 0.8, dashArray: '6, 8' }).addTo(routeLayer);
-            map.fitBounds(line.getBounds(), { padding: [50, 50] });
-
-            // Stats
-            document.getElementById('totalDistance').innerText = `מרחק הליכה: ${totalDist.toFixed(2)} ק״מ`;
-            const totalHours = ((currentMinutes - (10 * 60)) / 60).toFixed(1);
-            document.getElementById('totalDuration').innerText = `זמן כולל: כ-${totalHours} שעות`;
-        }
-
-        window.onload = initMap;
-    </script>
-</body>
-</html>
