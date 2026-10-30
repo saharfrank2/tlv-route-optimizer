@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TLV Navigator | Curated Urban Day Trip Planner</title>
+    <title>TLV Navigator | Curated Urban Day Itineraries</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Premium Google Fonts: Playfair Display, Cinzel, Plus Jakarta Sans -->
+    <!-- Luxury Serif & Sans Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Leaflet Map CSS & JS -->
@@ -21,27 +21,26 @@
             theme: {
                 extend: {
                     colors: {
+                        cream: '#FAF8F5',
                         sand: {
-                            DEFAULT: '#FBF9F5',
-                            card: '#FFFFFF',
-                            muted: '#F0ECE1',
+                            light: '#F5F2EB',
+                            DEFAULT: '#EFECE6',
+                            dark: '#D8D2C5',
                         },
-                        emeraldBrand: {
-                            DEFAULT: '#2D5A46',
-                            dark: '#1E3E30',
-                            light: '#427A60',
-                            soft: '#EDF5F1',
+                        gold: {
+                            DEFAULT: '#B39366',
+                            light: '#CDB694',
+                            dark: '#8C6F47',
                         },
-                        goldAccent: {
-                            DEFAULT: '#C5A880',
-                            light: '#E5D6C3',
-                            dark: '#9E825D',
-                        },
-                        charcoal: '#1A1A1A'
+                        charcoal: {
+                            DEFAULT: '#1C1C1A',
+                            soft: '#2D2D2A',
+                            muted: '#5A5A55',
+                        }
                     },
                     fontFamily: {
-                        brand: ['Playfair Display', 'serif'],
-                        subbrand: ['Cinzel', 'serif'],
+                        luxury: ['Cinzel', 'serif'],
+                        serif: ['Playfair Display', 'serif'],
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
                     }
                 }
@@ -51,181 +50,187 @@
 
     <style>
         body {
-            background-color: #FBF9F5;
-            color: #1A1A1A;
+            background-color: #FAF8F5;
+            color: #1C1C1A;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .glass-header {
-            background: rgba(251, 249, 245, 0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(45, 90, 70, 0.12);
+        .luxury-header {
+            background: rgba(250, 248, 245, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(179, 147, 102, 0.2);
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(197, 168, 128, 0.25);
-            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.04);
+        .luxury-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(179, 147, 102, 0.22);
+            box-shadow: 0 10px 30px -10px rgba(28, 28, 26, 0.04);
         }
 
         #map {
-            height: 540px;
+            height: 560px;
             width: 100%;
-            border-radius: 1.25rem;
+            border-radius: 1rem;
             z-index: 10;
         }
 
-        .custom-route-marker {
-            background: #2D5A46;
+        /* Luxury Minimal Marker */
+        .luxury-marker-pin {
+            width: 28px;
+            height: 28px;
+            background: #1C1C1A;
             color: #FFFFFF;
+            border: 1.5px solid #B39366;
             border-radius: 50%;
-            border: 2px solid #FFFFFF;
-            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(45, 90, 70, 0.35);
-            font-size: 13px;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(28, 28, 26, 0.25);
+        }
+
+        .leaflet-popup-content-wrapper {
+            background: #FAF8F5;
+            color: #1C1C1A;
+            border-radius: 12px;
+            border: 1px solid rgba(179, 147, 102, 0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 4px;
+        }
+
+        .leaflet-popup-tip {
+            background: #FAF8F5;
         }
 
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: #F0ECE1;
+            background: #F5F2EB;
         }
         ::-webkit-scrollbar-thumb {
-            background: #2D5A46;
-            border-radius: 4px;
+            background: #B39366;
+            border-radius: 3px;
         }
     </style>
 </head>
-<body class="antialiased text-charcoal">
+<body class="antialiased text-charcoal selection:bg-gold/20 selection:text-charcoal">
 
     <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 py-4 px-6 lg:px-16 text-charcoal glass-header transition-all">
+    <header class="fixed top-0 left-0 right-0 z-50 py-5 px-6 lg:px-20 luxury-header transition-all">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="#hero" class="flex flex-col items-start group">
-                <span class="font-brand text-2xl lg:text-3xl tracking-wider text-charcoal group-hover:text-emeraldBrand transition-colors font-bold">
-                    TLV Navigator
+                <span class="font-luxury text-xl lg:text-2xl tracking-[0.28em] text-charcoal uppercase font-medium group-hover:text-gold transition-colors">
+                    TLV NAVIGATOR
                 </span>
-                <span class="font-subbrand text-[10px] tracking-[0.3em] text-emeraldBrand uppercase font-semibold -mt-1">
-                    Curated City Itineraries
+                <span class="text-[9px] tracking-[0.35em] text-gold uppercase font-normal -mt-0.5">
+                    Curated Itineraries
                 </span>
             </a>
 
-            <nav class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-medium">
-                <a href="#hero" class="hover:text-emeraldBrand transition-colors py-1">Experience</a>
-                <a href="#planner" class="hover:text-emeraldBrand transition-colors py-1">Interactive Planner</a>
-                <a href="#features" class="hover:text-emeraldBrand transition-colors py-1">How It Works</a>
+            <nav class="hidden md:flex items-center space-x-10 text-[11px] uppercase tracking-[0.25em] font-normal text-charcoal/80">
+                <a href="#hero" class="hover:text-gold transition-colors py-1">Experience</a>
+                <a href="#planner" class="hover:text-gold transition-colors py-1">Itinerary Planner</a>
+                <a href="#about" class="hover:text-gold transition-colors py-1">Philosophy</a>
             </nav>
 
-            <a href="#planner" class="bg-emeraldBrand hover:bg-emeraldBrand-dark text-white text-xs font-semibold px-6 py-3 rounded-full transition-all shadow-md hover:shadow-emeraldBrand/25 tracking-wider">
-                Plan My Route
+            <a href="#planner" class="border border-charcoal/40 hover:border-gold hover:text-gold text-charcoal text-[11px] uppercase tracking-[0.2em] px-6 py-2.5 rounded-full transition-all">
+                Plan Itinerary
             </a>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section id="hero" class="relative min-h-[75vh] flex items-center justify-center overflow-hidden bg-sand pt-32 pb-20">
-        <!-- Subtle Background Glow -->
-        <div class="absolute inset-0 z-0 opacity-40 bg-[radial-gradient(#2D5A46_1px,transparent_1px)] [background-size:24px_24px]"></div>
-        
+    <!-- Luxury Editorial Hero -->
+    <section id="hero" class="relative min-h-[65vh] flex items-center justify-center overflow-hidden bg-cream pt-36 pb-20 border-b border-gold/15">
         <div class="max-w-4xl mx-auto text-center px-6 relative z-10">
-            <div class="inline-flex items-center space-x-2 border border-emeraldBrand/20 bg-emeraldBrand-soft/80 backdrop-blur-md text-emeraldBrand px-4 py-1.5 rounded-full mb-6">
-                <i class="fa-solid fa-sparkles text-xs"></i>
-                <span class="text-xs uppercase tracking-widest font-semibold">Smart Urban Route Planner</span>
-            </div>
-            
-            <h1 class="font-brand text-4xl sm:text-6xl md:text-7xl text-charcoal font-semibold leading-[1.15] mb-6">
-                Explore Tel Aviv at <br class="hidden sm:inline" />
-                <span class="italic font-normal text-emeraldBrand">Your Perfect Pace</span>
+            <span class="text-[10px] uppercase tracking-[0.4em] text-gold font-medium block mb-4">
+                THE ART OF CONTEMPLATIVE TRAVEL
+            </span>
+
+            <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl text-charcoal font-normal leading-[1.2] mb-6">
+                Curating the City of White
             </h1>
 
-            <p class="text-charcoal/70 text-base md:text-xl font-normal max-w-2xl mx-auto leading-relaxed mb-10">
-                Choose your favorite highlights across Tel Aviv. Our intelligent planner automatically calculates the smoothest walking order, saving transit time so you can soak in every moment.
+            <div class="w-12 h-[1px] bg-gold mx-auto mb-8"></div>
+
+            <p class="text-charcoal-muted text-base md:text-lg font-light max-w-2xl mx-auto leading-relaxed mb-10">
+                A refined day planner tailored to the rhythm of Tel Aviv. Select your cultural anchors, culinary stops, and promenades to receive an effortless, sequential journey.
             </p>
 
-            <div class="flex flex-wrap justify-center gap-4 text-xs font-medium text-charcoal/80 mb-8">
-                <span class="bg-white/90 border border-goldAccent/40 px-4 py-2 rounded-full shadow-sm flex items-center space-x-2">
-                    <i class="fa-solid fa-person-walking text-emeraldBrand"></i>
-                    <span>Shortest Walking Paths</span>
-                </span>
-                <span class="bg-white/90 border border-goldAccent/40 px-4 py-2 rounded-full shadow-sm flex items-center space-x-2">
-                    <i class="fa-solid fa-clock text-emeraldBrand"></i>
-                    <span>Opening Hours Synchronized</span>
-                </span>
-                <span class="bg-white/90 border border-goldAccent/40 px-4 py-2 rounded-full shadow-sm flex items-center space-x-2">
-                    <i class="fa-solid fa-route text-emeraldBrand"></i>
-                    <span>Seamless Daily Flow</span>
-                </span>
+            <div class="flex items-center justify-center space-x-8 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted font-light">
+                <span>Tailored Distances</span>
+                <span class="text-gold">•</span>
+                <span>Optimized Timing</span>
+                <span class="text-gold">•</span>
+                <span>Effortless Flow</span>
             </div>
         </div>
     </section>
 
-    <!-- Planner Section -->
-    <section id="planner" class="py-16 px-4 md:px-12 lg:px-20 bg-sand border-t border-goldAccent/20">
+    <!-- Interactive Route Planner -->
+    <section id="planner" class="py-16 px-4 md:px-12 lg:px-20 bg-cream">
         <div class="max-w-7xl mx-auto">
 
-            <!-- Category Filter Tabs -->
-            <div class="flex items-center justify-center space-x-2 overflow-x-auto pb-8 text-xs">
-                <button onclick="filterCategory('all', this)" class="cat-btn active whitespace-nowrap bg-emeraldBrand text-white px-5 py-2.5 rounded-full transition-all shadow-sm font-medium">All Highlights</button>
-                <button onclick="filterCategory('culture', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Culture & Art</button>
-                <button onclick="filterCategory('food', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Markets & Food</button>
-                <button onclick="filterCategory('vibes', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Streets & Vibe</button>
-                <button onclick="filterCategory('coastal', this)" class="cat-btn whitespace-nowrap border border-emeraldBrand/30 text-charcoal px-5 py-2.5 rounded-full hover:bg-emeraldBrand hover:text-white transition-all font-medium">Beach & Port</button>
+            <!-- Category Tabs -->
+            <div class="flex items-center justify-center space-x-2 md:space-x-3 overflow-x-auto pb-8 text-xs tracking-wider">
+                <button onclick="filterCategory('all', this)" class="cat-btn active whitespace-nowrap bg-charcoal text-white px-5 py-2.5 rounded-full transition-all font-light">All Highlights</button>
+                <button onclick="filterCategory('culture', this)" class="cat-btn whitespace-nowrap border border-charcoal/20 text-charcoal px-5 py-2.5 rounded-full hover:border-gold hover:text-gold transition-all font-light">Culture & Arts</button>
+                <button onclick="filterCategory('culinary', this)" class="cat-btn whitespace-nowrap border border-charcoal/20 text-charcoal px-5 py-2.5 rounded-full hover:border-gold hover:text-gold transition-all font-light">Culinary & Markets</button>
+                <button onclick="filterCategory('neighborhoods', this)" class="cat-btn whitespace-nowrap border border-charcoal/20 text-charcoal px-5 py-2.5 rounded-full hover:border-gold hover:text-gold transition-all font-light">Historic Quarters</button>
+                <button onclick="filterCategory('coastal', this)" class="cat-btn whitespace-nowrap border border-charcoal/20 text-charcoal px-5 py-2.5 rounded-full hover:border-gold hover:text-gold transition-all font-light">Coast & Waterfront</button>
             </div>
 
-            <!-- Planner Split View -->
+            <!-- Main Layout Split -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                <!-- Left: Places Checklist -->
+                <!-- Left: Places List Selection -->
                 <div class="lg:col-span-5 space-y-4">
-                    <div class="flex justify-between items-center px-1">
+                    <div class="flex justify-between items-baseline px-1 pb-1 border-b border-gold/20">
                         <div>
-                            <h3 class="font-brand text-2xl text-charcoal font-semibold">Select Your Stops</h3>
-                            <p class="text-xs text-charcoal/60 mt-0.5">Pick the places you wish to visit today</p>
+                            <h3 class="font-luxury text-lg text-charcoal font-medium tracking-wide">Select Destinations</h3>
+                            <p class="text-xs text-charcoal-muted mt-0.5">Toggle places to update map</p>
                         </div>
-                        <span id="selectedCount" class="text-xs font-semibold bg-emeraldBrand-soft text-emeraldBrand px-3 py-1.5 rounded-full border border-emeraldBrand/20">
+                        <span id="selectedCount" class="text-xs font-mono text-gold-dark tracking-wide">
                             3 selected
                         </span>
                     </div>
 
-                    <div class="space-y-3 max-h-[580px] overflow-y-auto pr-1" id="placesList">
-                        <!-- Loaded dynamically via JS -->
+                    <div class="space-y-2.5 max-h-[580px] overflow-y-auto pr-1" id="placesList">
+                        <!-- Loaded dynamically -->
                     </div>
 
-                    <button onclick="optimizeRoute()" class="w-full bg-emeraldBrand hover:bg-emeraldBrand-dark text-white py-4 rounded-2xl font-semibold transition-all shadow-lg flex items-center justify-center space-x-2 text-sm tracking-wide">
-                        <i class="fa-solid fa-wand-magic-sparkles text-goldAccent"></i>
-                        <span>Generate Optimal Schedule</span>
+                    <button onclick="optimizeRoute()" class="w-full bg-charcoal hover:bg-gold text-white hover:text-charcoal py-3.5 rounded-xl font-medium transition-all shadow-sm text-xs uppercase tracking-[0.25em] mt-3">
+                        Generate Optimal Schedule
                     </button>
                 </div>
 
                 <!-- Right: Map & Generated Timeline -->
                 <div class="lg:col-span-7 space-y-6">
-                    <!-- Interactive Leaflet Map -->
-                    <div class="glass-card p-3 rounded-3xl shadow-sm">
+                    <!-- Clean Map Frame -->
+                    <div class="luxury-card p-3 rounded-2xl">
                         <div id="map"></div>
                     </div>
 
-                    <!-- Optimized Schedule Result -->
-                    <div id="resultsCard" class="glass-card p-6 md:p-8 rounded-3xl hidden">
-                        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-goldAccent/25 pb-5 mb-6 gap-3">
+                    <!-- Generated Route Timeline -->
+                    <div id="resultsCard" class="luxury-card p-6 md:p-8 rounded-2xl hidden">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-baseline border-b border-gold/20 pb-4 mb-5 gap-2">
                             <div>
-                                <span class="text-xs uppercase tracking-widest text-emeraldBrand font-semibold block">Curated Daily Schedule</span>
-                                <h3 class="font-brand text-2xl text-charcoal font-semibold">Your Tailored Day Tour</h3>
+                                <span class="text-[10px] uppercase tracking-[0.3em] text-gold font-medium block">SEQUENTIAL TIMELINE</span>
+                                <h3 class="font-serif text-2xl text-charcoal font-normal">Your Tailored Schedule</h3>
                             </div>
-                            <div class="flex items-center space-x-3 text-xs">
-                                <span class="bg-emeraldBrand-soft text-emeraldBrand px-3.5 py-1.5 rounded-full font-semibold" id="totalDistance">Total: 0 km</span>
-                                <span class="bg-sand-muted text-charcoal/80 px-3.5 py-1.5 rounded-full font-medium" id="totalDuration">Duration: ~0 hrs</span>
+                            <div class="flex items-center space-x-4 text-xs font-mono text-charcoal-muted">
+                                <span id="totalDistance">Walking: 0 km</span>
+                                <span class="text-gold">•</span>
+                                <span id="totalDuration">Duration: ~0 hrs</span>
                             </div>
                         </div>
 
-                        <!-- Schedule Timeline List -->
                         <div id="timelineContainer" class="space-y-4">
-                            <!-- Injected dynamically via JS -->
+                            <!-- Injected dynamically -->
                         </div>
                     </div>
                 </div>
@@ -234,64 +239,34 @@
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section id="features" class="py-20 px-6 md:px-12 lg:px-24 bg-white border-t border-goldAccent/20">
-        <div class="max-w-5xl mx-auto">
-            <div class="text-center space-y-3 mb-14">
-                <span class="text-xs uppercase tracking-[0.25em] text-emeraldBrand font-semibold">Effortless Exploration</span>
-                <h2 class="font-brand text-3xl sm:text-4xl text-charcoal font-semibold">How TLV Navigator Works</h2>
-                <div class="w-16 h-[2px] bg-goldAccent mx-auto mt-2"></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 rounded-2xl bg-sand/60 border border-goldAccent/20 space-y-3">
-                    <div class="w-12 h-12 rounded-2xl bg-emeraldBrand/10 flex items-center justify-center text-emeraldBrand text-xl">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                    </div>
-                    <h4 class="font-brand text-xl text-charcoal font-semibold">1. Choose Attractions</h4>
-                    <p class="text-xs text-charcoal/70 leading-relaxed">
-                        Select historic landmarks, food markets, quiet beach strips, and cultural institutions you wish to experience.
-                    </p>
-                </div>
-
-                <div class="p-6 rounded-2xl bg-sand/60 border border-goldAccent/20 space-y-3">
-                    <div class="w-12 h-12 rounded-2xl bg-emeraldBrand/10 flex items-center justify-center text-emeraldBrand text-xl">
-                        <i class="fa-solid fa-route"></i>
-                    </div>
-                    <h4 class="font-brand text-xl text-charcoal font-semibold">2. Smart Walking Route</h4>
-                    <p class="text-xs text-charcoal/70 leading-relaxed">
-                        The engine rearranges your stops in the shortest order, eliminating backtracking and unnecessary walking in the sun.
-                    </p>
-                </div>
-
-                <div class="p-6 rounded-2xl bg-sand/60 border border-goldAccent/20 space-y-3">
-                    <div class="w-12 h-12 rounded-2xl bg-emeraldBrand/10 flex items-center justify-center text-emeraldBrand text-xl">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                    <h4 class="font-brand text-xl text-charcoal font-semibold">3. Ready-To-Go Itinerary</h4>
-                    <p class="text-xs text-charcoal/70 leading-relaxed">
-                        Get a clear, hour-by-hour itinerary designed around venue opening times, giving you a smooth, stress-free day in the city.
-                    </p>
-                </div>
-            </div>
+    <!-- Philosophy & Narrative -->
+    <section id="about" class="py-20 px-6 md:px-12 lg:px-24 bg-sand-light border-t border-gold/20">
+        <div class="max-w-4xl mx-auto text-center space-y-6">
+            <span class="text-[10px] uppercase tracking-[0.35em] text-gold font-medium">DESIGN PHILOSOPHY</span>
+            <h2 class="font-serif text-3xl sm:text-4xl text-charcoal font-normal">Effortless Spatial Curation</h2>
+            <div class="w-10 h-[1px] bg-gold mx-auto"></div>
+            <p class="text-charcoal-muted text-sm md:text-base font-light leading-relaxed">
+                Tel Aviv is best appreciated on foot, where historic Bauhaus facades meet the Mediterranean horizon. By ordering stops harmoniously, TLV Navigator ensures each venue is experienced without rush, turning a daily tour into an organic stroll.
+            </p>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="bg-charcoal text-white/80 py-12 px-6 text-center text-xs">
         <div class="max-w-7xl mx-auto space-y-4">
-            <div class="font-brand text-2xl tracking-wider text-white font-semibold">TLV Navigator</div>
-            <p class="text-white/50 max-w-md mx-auto">
-                A clean, intuitive daily route and schedule planner for discovering the vibrant culture of Tel Aviv.
+            <div class="font-luxury text-lg tracking-[0.25em] text-white uppercase font-light">TLV NAVIGATOR</div>
+            <p class="text-white/40 text-[11px] tracking-wider max-w-sm mx-auto font-light">
+                An architectural and cultural day-tour planner for Tel Aviv.
             </p>
-            <div class="pt-6 border-t border-white/10 text-white/60 text-xs">
-                Designed & Developed by <span class="text-white font-semibold underline decoration-goldAccent decoration-2 underline-offset-4">Sahar Frank</span>
+            <div class="pt-6 border-t border-white/10 text-white/50 text-xs font-light tracking-wide">
+                Designed & Developed by <span class="text-gold-light font-medium">Sahar Frank</span>
             </div>
         </div>
     </footer>
 
     <!-- Logic Script -->
     <script>
+        // Extensive separated places dataset
         const places = [
             {
                 id: 1,
@@ -300,97 +275,136 @@
                 lat: 32.0776,
                 lng: 34.7870,
                 duration: 90,
-                openHour: 10,
-                closeHour: 18,
-                desc: "World-class modern and contemporary art exhibits in an architectural landmark."
+                desc: "Modern and contemporary masterworks within an architectural landmark."
             },
             {
                 id: 2,
-                name: "Carmel Market & Yemenite Quarter",
-                category: "food",
+                name: "Carmel Market",
+                category: "culinary",
                 lat: 32.0673,
                 lng: 34.7674,
-                duration: 75,
-                openHour: 9,
-                closeHour: 17,
-                desc: "Bustling culinary street market with fresh produce, boutique street food, and historic alleys."
+                duration: 60,
+                desc: "The quintessential open-air food market with artisan street stalls."
             },
             {
                 id: 3,
-                name: "Rothschild Boulevard & Bauhaus",
-                category: "vibes",
-                lat: 32.0636,
-                lng: 34.7735,
-                duration: 60,
-                openHour: 8,
-                closeHour: 22,
-                desc: "Iconic tree-shaded boulevard showcasing White City UNESCO heritage architecture and cafes."
+                name: "Kerem HaTeimanim",
+                category: "neighborhoods",
+                lat: 32.0660,
+                lng: 34.7660,
+                duration: 50,
+                desc: "Quiet historic alleyways known for traditional home bakeries and taverns."
             },
             {
                 id: 4,
-                name: "Old Jaffa & Ancient Port",
-                category: "vibes",
-                lat: 32.0538,
-                lng: 34.7508,
-                duration: 90,
-                openHour: 9,
-                closeHour: 21,
-                desc: "Charming stone alleys, artisan galleries, panoramic coastal lookouts, and ancient harbor history."
+                name: "Rothschild Boulevard",
+                category: "neighborhoods",
+                lat: 32.0636,
+                lng: 34.7735,
+                duration: 60,
+                desc: "Iconic ficus-canopied avenue flanked by restored Bauhaus architecture."
             },
             {
                 id: 5,
-                name: "Levinsky Spice Market & Florentin",
-                category: "food",
-                lat: 32.0588,
-                lng: 34.7725,
-                duration: 60,
-                openHour: 9,
-                closeHour: 19,
-                desc: "Aromatic spice shops, traditional delis, vibrant street art, and bohemian city energy."
+                name: "Suzanne Dellal Centre",
+                category: "culture",
+                lat: 32.0597,
+                lng: 34.7632,
+                duration: 45,
+                desc: "Serene citrus courtyards and the cultural epicenter of Israeli dance."
             },
             {
                 id: 6,
-                name: "Beach Boardwalk & Charles Clore Park",
+                name: "Neve Tzedek Historic Quarter",
+                category: "neighborhoods",
+                lat: 32.0612,
+                lng: 34.7650,
+                duration: 60,
+                desc: "Pastel cottages, designer boutiques, and peaceful cobblestone passages."
+            },
+            {
+                id: 7,
+                name: "Old Jaffa Alleys & Zodiac Streets",
+                category: "neighborhoods",
+                lat: 32.0538,
+                lng: 34.7508,
+                duration: 75,
+                desc: "Limestone paths, artisan galleries, and ancient Mediterranean outlooks."
+            },
+            {
+                id: 8,
+                name: "Jaffa Ancient Port",
+                category: "coastal",
+                lat: 32.0519,
+                lng: 34.7482,
+                duration: 45,
+                desc: "One of the oldest ports in the world with maritime history and seaside cafes."
+            },
+            {
+                id: 9,
+                name: "Levinsky Spice Market",
+                category: "culinary",
+                lat: 32.0588,
+                lng: 34.7725,
+                duration: 50,
+                desc: "Boutique delis, roasted coffee, cured olives, and Persian spice sacks."
+            },
+            {
+                id: 10,
+                name: "Florentin Street Art Strip",
+                category: "neighborhoods",
+                lat: 32.0570,
+                lng: 34.7700,
+                duration: 45,
+                desc: "Bohemian quarter renowned for contemporary urban murals and craft studios."
+            },
+            {
+                id: 11,
+                name: "Bialik Street & Town Hall",
+                category: "culture",
+                lat: 32.0722,
+                lng: 34.7712,
+                duration: 40,
+                desc: "A picturesque square housing historic residences and early city archives."
+            },
+            {
+                id: 12,
+                name: "Charles Clore Beachfront",
                 category: "coastal",
                 lat: 32.0628,
                 lng: 34.7588,
                 duration: 45,
-                openHour: 7,
-                closeHour: 23,
-                desc: "Mediterranean sea breeze, golden hour sunsets, and open waterfront walking paths."
+                desc: "Sprawling grass lawns meeting coastal waves with views of historic Jaffa."
             },
             {
-                id: 7,
-                name: "Neve Tzedek & Suzanne Dellal",
-                category: "culture",
-                lat: 32.0597,
-                lng: 34.7632,
-                duration: 60,
-                openHour: 9,
-                closeHour: 20,
-                desc: "Tel Aviv's first historic neighborhood outside Jaffa, with upscale boutiques and garden courtyards."
-            },
-            {
-                id: 8,
-                name: "Tel Aviv Port (Namal)",
+                id: 13,
+                name: "Tel Aviv Port Boardwalk (Namal)",
                 category: "coastal",
                 lat: 32.0975,
                 lng: 34.7739,
                 duration: 60,
-                openHour: 9,
-                closeHour: 22,
-                desc: "Famous wavy wooden promenade, ocean-view dining, and vibrant open-air shopping."
+                desc: "Undulating wooden decks, open horizons, and coastal sea spray."
+            },
+            {
+                id: 14,
+                name: "Eretz Israel Museum (MUZA)",
+                category: "culture",
+                lat: 32.1028,
+                lng: 34.7950,
+                duration: 75,
+                desc: "Expansive museum pavilion showcasing regional archaeology and material culture."
             }
         ];
 
-        let selectedPlaceIds = [2, 3, 7];
+        let selectedPlaceIds = [4, 6, 7]; // Curated default
         let map;
         let markersLayer;
         let routeLayer;
 
         function initMap() {
-            map = L.map('map').setView([32.0720, 34.7700], 13);
+            map = L.map('map', { zoomControl: true }).setView([32.0710, 34.7680], 13);
 
+            // Clean cartographic map layer
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap contributors'
@@ -402,9 +416,7 @@
             renderPlacesList();
             updateMapMarkers();
 
-            setTimeout(() => {
-                map.invalidateSize();
-            }, 300);
+            setTimeout(() => { map.invalidateSize(); }, 300);
         }
 
         function renderPlacesList(filter = 'all') {
@@ -416,18 +428,20 @@
 
                 const isChecked = selectedPlaceIds.includes(place.id);
                 const item = document.createElement('div');
-                item.className = `p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                    isChecked ? 'border-emeraldBrand bg-emeraldBrand-soft/60 shadow-sm' : 'border-gray-200 bg-white hover:border-emeraldBrand/40'
+                item.className = `p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                    isChecked 
+                        ? 'border-gold bg-sand-light/80 shadow-sm' 
+                        : 'border-sand bg-white hover:border-gold/40'
                 }`;
                 item.onclick = () => togglePlace(place.id);
 
                 item.innerHTML = `
-                    <div class="flex items-start space-x-3.5">
-                        <input type="checkbox" ${isChecked ? 'checked' : ''} class="mt-1 w-4 h-4 accent-emeraldBrand rounded cursor-pointer pointer-events-none">
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} class="mt-0.5 w-4 h-4 accent-charcoal rounded cursor-pointer pointer-events-none">
                         <div>
-                            <h4 class="font-semibold text-sm text-charcoal">${place.name}</h4>
-                            <p class="text-xs text-charcoal/60 mt-0.5">${place.desc}</p>
-                            <span class="inline-block mt-1 text-[11px] text-emeraldBrand font-medium">Visiting hours: ${place.openHour}:00 - ${place.closeHour}:00 • Suggested: ${place.duration} mins</span>
+                            <h4 class="font-medium text-xs text-charcoal tracking-wide">${place.name}</h4>
+                            <p class="text-[11px] text-charcoal-muted mt-0.5 leading-snug font-light">${place.desc}</p>
+                            <span class="inline-block mt-1 text-[10px] text-gold-dark font-mono font-medium">Suggested stay: ${place.duration} mins</span>
                         </div>
                     </div>
                 `;
@@ -437,49 +451,61 @@
             document.getElementById('selectedCount').innerText = `${selectedPlaceIds.length} selected`;
         }
 
+        // Toggle place and IMMEDIATELY update map
         function togglePlace(id) {
             if (selectedPlaceIds.includes(id)) {
                 selectedPlaceIds = selectedPlaceIds.filter(item => item !== id);
             } else {
                 selectedPlaceIds.push(id);
             }
+            // Clear existing calculated polyline route when selection changes
+            routeLayer.clearLayers();
+            document.getElementById('resultsCard').classList.add('hidden');
+
             renderPlacesList();
             updateMapMarkers();
         }
 
         function filterCategory(cat, element) {
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-emeraldBrand', 'text-white');
-                btn.classList.add('border', 'border-emeraldBrand/30', 'text-charcoal');
+                btn.classList.remove('bg-charcoal', 'text-white');
+                btn.classList.add('border', 'border-charcoal/20', 'text-charcoal');
             });
             if (element) {
-                element.classList.remove('border', 'border-emeraldBrand/30', 'text-charcoal');
-                element.classList.add('bg-emeraldBrand', 'text-white');
+                element.classList.remove('border', 'border-charcoal/20', 'text-charcoal');
+                element.classList.add('bg-charcoal', 'text-white');
             }
             renderPlacesList(cat);
         }
 
+        // Refined minimal marker pin on map
         function updateMapMarkers() {
             markersLayer.clearLayers();
             const groupCoords = [];
 
             places.forEach(place => {
                 if (selectedPlaceIds.includes(place.id)) {
+                    // Refined circular gold/charcoal ring marker
                     const marker = L.circleMarker([place.lat, place.lng], {
-                        radius: 8,
-                        fillColor: "#2D5A46",
-                        color: "#ffffff",
+                        radius: 7,
+                        fillColor: "#B39366",
+                        color: "#1C1C1A",
                         weight: 2,
                         opacity: 1,
                         fillOpacity: 0.95
-                    }).bindPopup(`<b>${place.name}</b><br><span style="font-size:11px">${place.desc}</span>`);
+                    }).bindPopup(`
+                        <div class="p-1">
+                            <h5 style="font-family:'Cinzel', serif; font-size:12px; margin:0 0 4px 0; color:#1C1C1A;">${place.name}</h5>
+                            <p style="font-size:11px; margin:0; color:#5A5A55; line-height:1.4;">${place.desc}</p>
+                        </div>
+                    `);
                     markersLayer.addLayer(marker);
                     groupCoords.push([place.lat, place.lng]);
                 }
             });
 
             if (groupCoords.length > 0 && routeLayer.getLayers().length === 0) {
-                map.fitBounds(L.latLngBounds(groupCoords), { padding: [50, 50], maxZoom: 15 });
+                map.fitBounds(L.latLngBounds(groupCoords), { padding: [60, 60], maxZoom: 15 });
             }
         }
 
@@ -497,7 +523,7 @@
 
         function optimizeRoute() {
             if (selectedPlaceIds.length < 2) {
-                alert("Please select at least 2 destinations to plan your route.");
+                alert("Please select at least 2 highlights to compose an itinerary.");
                 return;
             }
 
@@ -536,7 +562,7 @@
             const timeline = document.getElementById('timelineContainer');
             timeline.innerHTML = '';
 
-            let currentMinutes = 10 * 60; // Start at 10:00 AM
+            let currentMinutes = 10 * 60; // 10:00 AM leisurely start
             const polylinePoints = [];
 
             routeLayer.clearLayers();
@@ -545,14 +571,15 @@
             optimalPath.forEach((spot, idx) => {
                 polylinePoints.push([spot.lat, spot.lng]);
 
+                // Elegant numbered icon
                 const customIcon = L.divIcon({
-                    className: 'custom-route-marker',
+                    className: 'luxury-marker-pin',
                     html: `${idx + 1}`,
                     iconSize: [28, 28]
                 });
 
                 L.marker([spot.lat, spot.lng], { icon: customIcon })
-                    .bindPopup(`<b>Stop ${idx+1}: ${spot.name}</b><br><span style="font-size:11px">${spot.desc}</span>`)
+                    .bindPopup(`<b>${idx+1}. ${spot.name}</b><br><span style="font-size:11px">${spot.desc}</span>`)
                     .addTo(routeLayer);
 
                 const hours = Math.floor(currentMinutes / 60);
@@ -560,29 +587,30 @@
                 const timeStr = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
 
                 const item = document.createElement('div');
-                item.className = "flex items-start space-x-4 border-l-2 border-emeraldBrand pl-4 relative";
+                item.className = "flex items-start space-x-4 border-l border-gold/40 pl-4 relative";
                 item.innerHTML = `
-                    <div class="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-emeraldBrand"></div>
+                    <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gold border-2 border-white"></div>
                     <div class="flex-1">
                         <div class="flex items-center justify-between">
-                            <h5 class="font-semibold text-sm text-charcoal">Stop ${idx + 1}: ${spot.name}</h5>
-                            <span class="text-xs text-emeraldBrand font-bold">${timeStr}</span>
+                            <h5 class="font-medium text-xs text-charcoal uppercase tracking-wider">${idx + 1}. ${spot.name}</h5>
+                            <span class="text-xs text-gold-dark font-mono font-medium">${timeStr}</span>
                         </div>
-                        <p class="text-xs text-charcoal/70 mt-1">${spot.desc}</p>
-                        <span class="text-[11px] text-charcoal/50 font-medium">Estimated Stay: ${spot.duration} minutes</span>
+                        <p class="text-[11px] text-charcoal-muted mt-0.5 font-light">${spot.desc}</p>
+                        <span class="text-[10px] text-charcoal-muted/70 font-mono">Stay duration: ${spot.duration} minutes</span>
                     </div>
                 `;
                 timeline.appendChild(item);
 
-                currentMinutes += spot.duration + 15;
+                currentMinutes += spot.duration + 15; // 15 mins ambient walk
             });
 
-            const line = L.polyline(polylinePoints, { color: '#2D5A46', weight: 4, opacity: 0.85, dashArray: '6, 8' }).addTo(routeLayer);
+            // Refined thin gold/charcoal route line
+            const line = L.polyline(polylinePoints, { color: '#B39366', weight: 3, opacity: 0.9, dashArray: '5, 8' }).addTo(routeLayer);
             map.fitBounds(line.getBounds(), { padding: [50, 50] });
 
             document.getElementById('totalDistance').innerText = `Walking: ${totalDist.toFixed(2)} km`;
             const totalHours = ((currentMinutes - (10 * 60)) / 60).toFixed(1);
-            document.getElementById('totalDuration').innerText = `Total: ~${totalHours} hrs`;
+            document.getElementById('totalDuration').innerText = `Duration: ~${totalHours} hrs`;
         }
 
         window.onload = initMap;
