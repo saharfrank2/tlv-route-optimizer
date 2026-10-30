@@ -287,3 +287,305 @@
             <div class="pt-6 border-t border-white/10 text-white/60 text-xs">
                 Designed & Developed by <span class="text-white font-semibold underline decoration-goldAccent decoration-2 underline-offset-4">Sahar Frank</span>
             </div>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        const places = [
+            {
+                id: 1,
+                name: "Tel Aviv Museum of Art",
+                category: "culture",
+                lat: 32.0776,
+                lng: 34.7870,
+                duration: 90,
+                openHour: 10,
+                closeHour: 18,
+                desc: "World-class modern and contemporary art exhibits in an architectural landmark."
+            },
+            {
+                id: 2,
+                name: "Carmel Market & Yemenite Quarter",
+                category: "food",
+                lat: 32.0673,
+                lng: 34.7674,
+                duration: 75,
+                openHour: 9,
+                closeHour: 17,
+                desc: "Bustling culinary street market with fresh produce, boutique street food, and historic alleys."
+            },
+            {
+                id: 3,
+                name: "Rothschild Boulevard & Bauhaus",
+                category: "vibes",
+                lat: 32.0636,
+                lng: 34.7735,
+                duration: 60,
+                openHour: 8,
+                closeHour: 22,
+                desc: "Iconic tree-shaded boulevard showcasing White City UNESCO heritage architecture and cafes."
+            },
+            {
+                id: 4,
+                name: "Old Jaffa & Ancient Port",
+                category: "vibes",
+                lat: 32.0538,
+                lng: 34.7508,
+                duration: 90,
+                openHour: 9,
+                closeHour: 21,
+                desc: "Charming stone alleys, artisan galleries, panoramic coastal lookouts, and ancient harbor history."
+            },
+            {
+                id: 5,
+                name: "Levinsky Spice Market & Florentin",
+                category: "food",
+                lat: 32.0588,
+                lng: 34.7725,
+                duration: 60,
+                openHour: 9,
+                closeHour: 19,
+                desc: "Aromatic spice shops, traditional delis, vibrant street art, and bohemian city energy."
+            },
+            {
+                id: 6,
+                name: "Beach Boardwalk & Charles Clore Park",
+                category: "coastal",
+                lat: 32.0628,
+                lng: 34.7588,
+                duration: 45,
+                openHour: 7,
+                closeHour: 23,
+                desc: "Mediterranean sea breeze, golden hour sunsets, and open waterfront walking paths."
+            },
+            {
+                id: 7,
+                name: "Neve Tzedek & Suzanne Dellal",
+                category: "culture",
+                lat: 32.0597,
+                lng: 34.7632,
+                duration: 60,
+                openHour: 9,
+                closeHour: 20,
+                desc: "Tel Aviv's first historic neighborhood outside Jaffa, with upscale boutiques and garden courtyards."
+            },
+            {
+                id: 8,
+                name: "Tel Aviv Port (Namal)",
+                category: "coastal",
+                lat: 32.0975,
+                lng: 34.7739,
+                duration: 60,
+                openHour: 9,
+                closeHour: 22,
+                desc: "Famous wavy wooden promenade, ocean-view dining, and vibrant open-air shopping."
+            }
+        ];
+
+        let selectedPlaceIds = [2, 3, 7];
+        let map;
+        let markersLayer;
+        let routeLayer;
+
+        function initMap() {
+            map = L.map('map').setView([32.0720, 34.7700], 13);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            markersLayer = L.layerGroup().addTo(map);
+            routeLayer = L.layerGroup().addTo(map);
+
+            renderPlacesList();
+            updateMapMarkers();
+
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 300);
+        }
+
+        function renderPlacesList(filter = 'all') {
+            const listEl = document.getElementById('placesList');
+            listEl.innerHTML = '';
+
+            places.forEach(place => {
+                if (filter !== 'all' && place.category !== filter) return;
+
+                const isChecked = selectedPlaceIds.includes(place.id);
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                    isChecked ? 'border-emeraldBrand bg-emeraldBrand-soft/60 shadow-sm' : 'border-gray-200 bg-white hover:border-emeraldBrand/40'
+                }`;
+                item.onclick = () => togglePlace(place.id);
+
+                item.innerHTML = `
+                    <div class="flex items-start space-x-3.5">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} class="mt-1 w-4 h-4 accent-emeraldBrand rounded cursor-pointer pointer-events-none">
+                        <div>
+                            <h4 class="font-semibold text-sm text-charcoal">${place.name}</h4>
+                            <p class="text-xs text-charcoal/60 mt-0.5">${place.desc}</p>
+                            <span class="inline-block mt-1 text-[11px] text-emeraldBrand font-medium">Visiting hours: ${place.openHour}:00 - ${place.closeHour}:00 • Suggested: ${place.duration} mins</span>
+                        </div>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+
+            document.getElementById('selectedCount').innerText = `${selectedPlaceIds.length} selected`;
+        }
+
+        function togglePlace(id) {
+            if (selectedPlaceIds.includes(id)) {
+                selectedPlaceIds = selectedPlaceIds.filter(item => item !== id);
+            } else {
+                selectedPlaceIds.push(id);
+            }
+            renderPlacesList();
+            updateMapMarkers();
+        }
+
+        function filterCategory(cat, element) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-emeraldBrand', 'text-white');
+                btn.classList.add('border', 'border-emeraldBrand/30', 'text-charcoal');
+            });
+            if (element) {
+                element.classList.remove('border', 'border-emeraldBrand/30', 'text-charcoal');
+                element.classList.add('bg-emeraldBrand', 'text-white');
+            }
+            renderPlacesList(cat);
+        }
+
+        function updateMapMarkers() {
+            markersLayer.clearLayers();
+            const groupCoords = [];
+
+            places.forEach(place => {
+                if (selectedPlaceIds.includes(place.id)) {
+                    const marker = L.circleMarker([place.lat, place.lng], {
+                        radius: 8,
+                        fillColor: "#2D5A46",
+                        color: "#ffffff",
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.95
+                    }).bindPopup(`<b>${place.name}</b><br><span style="font-size:11px">${place.desc}</span>`);
+                    markersLayer.addLayer(marker);
+                    groupCoords.push([place.lat, place.lng]);
+                }
+            });
+
+            if (groupCoords.length > 0 && routeLayer.getLayers().length === 0) {
+                map.fitBounds(L.latLngBounds(groupCoords), { padding: [50, 50], maxZoom: 15 });
+            }
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function optimizeRoute() {
+            if (selectedPlaceIds.length < 2) {
+                alert("Please select at least 2 destinations to plan your route.");
+                return;
+            }
+
+            const selectedSpots = places.filter(p => selectedPlaceIds.includes(p.id));
+
+            function permute(arr) {
+                if (arr.length <= 1) return [arr];
+                let res = [];
+                for (let i = 0; i < arr.length; i++) {
+                    const rest = permute(arr.slice(0, i).concat(arr.slice(i + 1)));
+                    for (let r of rest) res.push([arr[i]].concat(r));
+                }
+                return res;
+            }
+
+            const allPaths = permute(selectedSpots);
+            let bestPath = null;
+            let minDistance = Infinity;
+
+            allPaths.forEach(path => {
+                let dist = 0;
+                for (let i = 0; i < path.length - 1; i++) {
+                    dist += calculateDistance(path[i].lat, path[i].lng, path[i+1].lat, path[i+1].lng);
+                }
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    bestPath = path;
+                }
+            });
+
+            renderResults(bestPath, minDistance);
+        }
+
+        function renderResults(optimalPath, totalDist) {
+            document.getElementById('resultsCard').classList.remove('hidden');
+            const timeline = document.getElementById('timelineContainer');
+            timeline.innerHTML = '';
+
+            let currentMinutes = 10 * 60; // Start at 10:00 AM
+            const polylinePoints = [];
+
+            routeLayer.clearLayers();
+            markersLayer.clearLayers();
+
+            optimalPath.forEach((spot, idx) => {
+                polylinePoints.push([spot.lat, spot.lng]);
+
+                const customIcon = L.divIcon({
+                    className: 'custom-route-marker',
+                    html: `${idx + 1}`,
+                    iconSize: [28, 28]
+                });
+
+                L.marker([spot.lat, spot.lng], { icon: customIcon })
+                    .bindPopup(`<b>Stop ${idx+1}: ${spot.name}</b><br><span style="font-size:11px">${spot.desc}</span>`)
+                    .addTo(routeLayer);
+
+                const hours = Math.floor(currentMinutes / 60);
+                const mins = currentMinutes % 60;
+                const timeStr = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+
+                const item = document.createElement('div');
+                item.className = "flex items-start space-x-4 border-l-2 border-emeraldBrand pl-4 relative";
+                item.innerHTML = `
+                    <div class="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-emeraldBrand"></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h5 class="font-semibold text-sm text-charcoal">Stop ${idx + 1}: ${spot.name}</h5>
+                            <span class="text-xs text-emeraldBrand font-bold">${timeStr}</span>
+                        </div>
+                        <p class="text-xs text-charcoal/70 mt-1">${spot.desc}</p>
+                        <span class="text-[11px] text-charcoal/50 font-medium">Estimated Stay: ${spot.duration} minutes</span>
+                    </div>
+                `;
+                timeline.appendChild(item);
+
+                currentMinutes += spot.duration + 15;
+            });
+
+            const line = L.polyline(polylinePoints, { color: '#2D5A46', weight: 4, opacity: 0.85, dashArray: '6, 8' }).addTo(routeLayer);
+            map.fitBounds(line.getBounds(), { padding: [50, 50] });
+
+            document.getElementById('totalDistance').innerText = `Walking: ${totalDist.toFixed(2)} km`;
+            const totalHours = ((currentMinutes - (10 * 60)) / 60).toFixed(1);
+            document.getElementById('totalDuration').innerText = `Total: ~${totalHours} hrs`;
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>
