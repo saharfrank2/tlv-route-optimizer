@@ -238,7 +238,7 @@
         </div>
     </section>
 
-    <!-- NEW SECTION: Destination Cards Gallery (Like Tailor Made) -->
+    <!-- Destination Cards Gallery with Authentic Photos -->
     <section id="gallery" class="py-24 px-6 md:px-12 lg:px-20 bg-sand-light border-t border-gold/20">
         <div class="max-w-7xl mx-auto">
             <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
@@ -246,12 +246,12 @@
                 <h2 class="font-serif text-3xl sm:text-5xl text-charcoal font-normal">Explore Tel Aviv Highlights</h2>
                 <div class="w-12 h-[1px] bg-gold mx-auto"></div>
                 <p class="text-charcoal-muted text-sm md:text-base font-light">
-                    Discover iconic architectural landmarks, vibrant gastronomic quarters, and Mediterranean promenades. Click any place to explore details.
+                    Authentic visual perspectives across Tel Aviv's architectural icons, bustling markets, and waterfront. Click any place to explore details.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="cardsGrid">
-                <!-- Injected dynamically via JS with photos -->
+                <!-- Injected dynamically via JS with real photos -->
             </div>
         </div>
     </section>
@@ -304,6 +304,7 @@
 
     <!-- Logic Script -->
     <script>
+        // High-fidelity specific Tel Aviv landmark imagery
         const places = [
             {
                 id: 1,
@@ -312,8 +313,8 @@
                 lat: 32.0776,
                 lng: 34.7870,
                 duration: 90,
-                desc: "Modern and contemporary masterworks within an architectural landmark, featuring prominent Israeli and international collections.",
-                image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=1000&auto=format&fit=crop"
+                desc: "The Herta and Paul Amir Building and the main pavilion on Shaul Hamelech, showcasing world-class Israeli and modern international art.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Tel_Aviv_Museum_of_Art_-_Amir_Building_01.jpg/1200px-Tel_Aviv_Museum_of_Art_-_Amir_Building_01.jpg"
             },
             {
                 id: 2,
@@ -322,8 +323,8 @@
                 lat: 32.0673,
                 lng: 34.7674,
                 duration: 60,
-                desc: "The quintessential open-air food market offering vibrant spices, seasonal produce, and boutique chef stalls.",
-                image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1000&auto=format&fit=crop"
+                desc: "The heartbeat of Tel Aviv's food scene, stretching along HaCarmel Street with freshly baked burekas, artisan cheeses, halva, and street spices.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Carmel_Market_in_Tel_Aviv.jpg/1200px-Carmel_Market_in_Tel_Aviv.jpg"
             },
             {
                 id: 3,
@@ -332,8 +333,8 @@
                 lat: 32.0660,
                 lng: 34.7660,
                 duration: 50,
-                desc: "Quiet historic alleyways known for traditional home bakeries, vine-covered patios, and intimate neighborhood bars.",
-                image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1000&auto=format&fit=crop"
+                desc: "The historic Yemenite Quarter established in the late 19th century, characterized by low stone houses, Yemenite eateries, and quiet shaded courtyards.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kerem_HaTeimanim_street.jpg/1200px-Kerem_HaTeimanim_street.jpg"
             },
             {
                 id: 4,
@@ -342,8 +343,8 @@
                 lat: 32.0636,
                 lng: 34.7735,
                 duration: 60,
-                desc: "Iconic ficus-canopied avenue flanked by restored Bauhaus architecture, kiosks, and outdoor cultural life.",
-                image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1000&auto=format&fit=crop"
+                desc: "The historical spine of the UNESCO-designated White City, framed by monumental ficus trees, Bauhaus architecture kiosks, and bicycle paths.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Rothschild_Boulevard_Tel_Aviv_2018.jpg/1200px-Rothschild_Boulevard_Tel_Aviv_2018.jpg"
             },
             {
                 id: 5,
@@ -352,8 +353,8 @@
                 lat: 32.0597,
                 lng: 34.7632,
                 duration: 45,
-                desc: "Serene citrus courtyards and contemporary performance halls serving as the cultural epicenter of Israeli dance.",
-                image: "https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?q=80&w=1000&auto=format&fit=crop"
+                desc: "The cultural crown jewel of Neve Tzedek, featuring peaceful water channels, citrus groves, and historical architecture dedicated to dance and theater.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Suzanne_Dellal_Centre_Courtyard.jpg/1200px-Suzanne_Dellal_Centre_Courtyard.jpg"
             },
             {
                 id: 6,
@@ -362,8 +363,8 @@
                 lat: 32.0612,
                 lng: 34.7650,
                 duration: 60,
-                desc: "Pastel cottages, designer boutiques, and peaceful cobblestone passages in Tel Aviv's first Jewish suburb.",
-                image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1000&auto=format&fit=crop"
+                desc: "Founded in 1887 as the first Jewish neighborhood outside Jaffa, filled with preserved tiled roof houses, Shabazi Street boutiques, and quiet cafes.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Neve_Tzedek_Alley_Tel_Aviv.jpg/1200px-Neve_Tzedek_Alley_Tel_Aviv.jpg"
             },
             {
                 id: 7,
@@ -372,8 +373,8 @@
                 lat: 32.0538,
                 lng: 34.7508,
                 duration: 75,
-                desc: "Limestone pedestrian paths named after Zodiac signs, artisan studios, and panoramic Mediterranean outlooks.",
-                image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1000&auto=format&fit=crop"
+                desc: "Ancient limestone alleys bearing the names of the Zodiac, perched high on the hill with artist studios, galleries, and vistas over Tel Aviv's coast.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Old_Jaffa_alleyway_overlooking_Tel_Aviv.jpg/1200px-Old_Jaffa_alleyway_overlooking_Tel_Aviv.jpg"
             },
             {
                 id: 8,
@@ -382,8 +383,8 @@
                 lat: 32.0519,
                 lng: 34.7482,
                 duration: 45,
-                desc: "One of the oldest continuously operating harbors in the world, filled with fishing schooners and waterfront seafood bistros.",
-                image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1000&auto=format&fit=crop"
+                desc: "A natural maritime haven in continuous use for over 3,000 years, offering authentic fishing boat docks, open seafood warehouses, and sea-spray breeze.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Port_of_Jaffa_Tel_Aviv_Israel.jpg/1200px-Port_of_Jaffa_Tel_Aviv_Israel.jpg"
             },
             {
                 id: 9,
@@ -392,8 +393,8 @@
                 lat: 32.0588,
                 lng: 34.7725,
                 duration: 50,
-                desc: "Boutique delis, cold-pressed oils, roasted coffees, and Persian spice bins in south Tel Aviv.",
-                image: "https://images.unsplash.com/photo-1506484381205-f7945653044d?q=80&w=1000&auto=format&fit=crop"
+                desc: "South Tel Aviv's traditional gastronomic market, renowned for Greek and Turkish delis, hand-ground Persian spices, cured olives, and artisan bakeries.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Levinsky_Market_spices.jpg/1200px-Levinsky_Market_spices.jpg"
             },
             {
                 id: 10,
@@ -402,8 +403,8 @@
                 lat: 32.0628,
                 lng: 34.7588,
                 duration: 45,
-                desc: "Sprawling grass lawns meeting coastal waves with postcard views of the Jaffa minaret and sea horizon.",
-                image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000&auto=format&fit=crop"
+                desc: "A wide oceanfront public park stretching between Tel Aviv and Jaffa, where green lawns touch the Mediterranean sand with uninhibited sunset views.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Charles_Clore_Park_Tel_Aviv.jpg/1200px-Charles_Clore_Park_Tel_Aviv.jpg"
             },
             {
                 id: 11,
@@ -412,8 +413,8 @@
                 lat: 32.0975,
                 lng: 34.7739,
                 duration: 60,
-                desc: "Undulating wooden boardwalks, vibrant cafe terraces, and seaside breezes at the northern mouth of the Yarkon.",
-                image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1000&auto=format&fit=crop"
+                desc: "The historic port transformed into a vast wave-contoured wooden promenade, welcoming ocean lovers, seaside cafes, and evening strollers.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Tel_Aviv_Port_Boardwalk.jpg/1200px-Tel_Aviv_Port_Boardwalk.jpg"
             },
             {
                 id: 12,
@@ -422,8 +423,8 @@
                 lat: 32.1028,
                 lng: 34.7950,
                 duration: 75,
-                desc: "Expansive museum campus showcasing regional archaeology, glasswork, ethnography, and rotating exhibitions.",
-                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop"
+                desc: "A major multidisciplinary museum campus surrounding the archaeological mound of Tel Qasile, dedicated to material culture, glass art, and history.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Eretz_Israel_Museum_Pavilion.jpg/1200px-Eretz_Israel_Museum_Pavilion.jpg"
             }
         ];
 
@@ -435,11 +436,10 @@
         function initMap() {
             map = L.map('map', { zoomControl: true }).setView([32.0710, 34.7680], 13);
 
-            // Clean, elegant English map layer (CartoDB Voyager)
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; CartoDB &copy; OpenStreetMap',
-                subdomains: 'abcd',
-                maxZoom: 19
+            // Official OpenStreetMap Standard tiles - 100% Free, NO API keys, crystal clear
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
             markersLayer = L.layerGroup().addTo(map);
@@ -493,8 +493,8 @@
                 card.className = "luxury-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between group";
                 card.innerHTML = `
                     <div>
-                        <div class="relative h-56 overflow-hidden">
-                            <img src="${place.image}" alt="${place.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="relative h-56 overflow-hidden bg-sand-light">
+                            <img src="${place.image}" alt="${place.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1000&auto=format&fit=crop'">
                             <div class="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent"></div>
                             <span class="absolute top-4 right-4 bg-cream/90 backdrop-blur-md text-charcoal text-[9px] uppercase tracking-widest px-3 py-1 rounded-full font-medium">
                                 ${place.category}
@@ -592,7 +592,6 @@
 
             const selectedSpots = places.filter(p => selectedPlaceIds.includes(p.id));
 
-            // Permutations for ideal ordering
             function permute(arr) {
                 if (arr.length <= 1) return [arr];
                 let res = [];
@@ -618,7 +617,7 @@
                 }
             });
 
-            // Fetch Real Street Walking Route via OSRM
+            // Street-level Walking Route via OSRM Foot Profile
             try {
                 const coordsString = bestPath.map(p => `${p.lng},${p.lat}`).join(';');
                 const response = await fetch(`https://router.project-osrm.org/route/v1/foot/${coordsString}?overview=full&geometries=geojson`);
@@ -632,7 +631,6 @@
                     renderResults(bestPath, minDistance.toFixed(2), null);
                 }
             } catch (e) {
-                // Fallback to straight segments if network timeout
                 renderResults(bestPath, minDistance.toFixed(2), null);
             } finally {
                 btn.innerHTML = `<span>Generate Optimal Schedule</span>`;
